@@ -1,0 +1,15 @@
+.navigation-layout{
+    header{
+        height: 98px;
+        padding:0px 8px 11px;
+        display: flex;
+        align-items: flex-end;
+        background-color: rgb(2, 2, 2);
+        border-radius: 0px 0 20px 20px;
+    }
+    .contents{
+        align-self: stretch;
+        height: 44px;
+        position: relative;
+    }
+}

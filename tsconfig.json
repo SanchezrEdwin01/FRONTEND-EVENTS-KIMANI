@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": ["vite/client", "react", "react-router-dom"],
+    "esModuleInterop": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2017"
+    ],
+    "target": "ES2017",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "allowJs": true,
+    "skipLibCheck": true
+  }
+}

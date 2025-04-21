@@ -1,0 +1,28 @@
+.event-card {
+  h2 {
+    font-family: var(--font-playfair-display);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23.99px;
+    letter-spacing: 0%;
+
+    span {
+      font-weight: bold;
+    }
+  }
+
+  p {
+    font-family: var(--font-hanken-grotesk);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 18.24px;
+    letter-spacing: 0%;
+  }
+
+  img{
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+    height: auto;
+  }
+}

@@ -1,0 +1,65 @@
+.addressAutocompleteContainer {
+  position: relative;
+  width: 100%;
+}
+
+.addressInput {
+  padding: 10px;
+    background-color: #2E2C2C;
+    border: none;
+    border-radius: 8px;
+    line-height: 1.5;
+    width: 100%;
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.addressInput:focus {
+  outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.addressInput::placeholder {
+  color: #FFF;
+}
+
+.errorMessage {
+  color: #e53935;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* Google Places Autocomplete dropdown styling */
+:global(.pac-container) {
+  box-shadow: none;
+  background-color: #212020;
+  border: none;
+  font-family: var(--font-inter);
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+:global(.pac-item) {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #fff;
+  border: none;
+}
+
+:global(.pac-item:hover) {
+  background-color: #2E2C2C;
+}
+
+:global(.pac-item-selected) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+:global(.pac-item-query) {
+  font-weight: 500;
+  color: #fff;
+}
+
+:global(.pac-matched) {
+  color: green;
+} 

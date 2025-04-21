@@ -1,0 +1,150 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.66);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+.picker {
+  background: rgb(30, 30, 30);
+  border-radius: 12px 12px 0 0;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dateToggle {
+  display: flex;
+  margin-bottom: 24px;
+  background: #272727;
+  padding: 2px;
+  border-radius: 8px;
+}
+
+.toggleButton {
+  flex: 1;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #949494;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleButton.active {
+  background: #1E1E1E;
+  color: #fff;
+}
+
+.pickerColumns {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 0.8fr;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0 8px;
+  position: relative;
+}
+
+.pickerColumn {
+  flex: 1;
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.scrollContainer {
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 80px 0;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.option {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.option.selected {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Selection band - darker and more opaque */
+.pickerColumns::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40px;
+  background: rgba(25, 25, 25, 0.95);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Stronger gradient fades */
+
+.pickerColumn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 80px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.pickerColumn::after {
+  bottom: 0;
+  background: linear-gradient(to top, rgb(30, 30, 30) 60%, rgba(30, 30, 30, 0));
+}
+
+/* Center all text including dates */
+.pickerColumn:first-child .option {
+  justify-content: center;
+}
+
+.doneButton {
+  width: 100%;
+  padding: 8px 0;
+  background: #EAEEDD;
+  border: none;
+  border-radius: 8px;
+  color: #222222;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.ampmColumn {
+  min-width: 60px;
+}

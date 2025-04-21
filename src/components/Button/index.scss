@@ -1,0 +1,22 @@
+button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 0;
+  font-size: 12px;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    transform: scale(1.1);
+  }
+  svg,
+  .icon {
+    font-family: system-ui;
+    font-weight: 100;
+    font-size: 70px;
+    margin-bottom: -23px;
+    margin-top: -40px;
+  }
+}

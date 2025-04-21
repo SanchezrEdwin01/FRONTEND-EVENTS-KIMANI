@@ -1,0 +1,187 @@
+.datePickerContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.dateDisplay {
+  padding: 8px 12px;
+  background-color: #2E2C2C;
+  color: #FFF;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.dateDisplay:hover {
+  background-color: #3A3838;
+}
+
+.datePickerWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  margin-top: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.calendar {
+  background-color: #2E2C2C !important;
+  border: none !important;
+  font-family: inherit !important;
+  color: #FFF !important;
+  border-radius: 4px !important;
+  padding: 10px !important;
+}
+
+.month {
+  color: #FFF !important;
+  padding: 8px !important;
+}
+
+.customHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(234, 238, 221, 0.2);
+}
+
+.monthYear {
+  font-weight: 700;
+  font-size: 18px;
+  color: #FFF;
+  text-transform: capitalize;
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.navButton {
+  background: none;
+  border: none;
+  color: #FFF;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+.navButton.navButtonLeft{
+    transform: rotate(180deg);
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: rgba(234, 238, 221, 0.1);
+}
+
+.navButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.todayButton {
+  background: none;
+  border: 1px solid rgba(234, 238, 221, 0.3);
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #FFF;
+  font-size: 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.todayButton:hover {
+  background-color: rgba(234, 238, 221, 0.1);
+  border-color: rgba(234, 238, 221, 0.5);
+}
+
+/* Override react-datepicker default styles */
+:global(.react-datepicker) {
+  font-family: inherit !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+:global(.react-datepicker__header) {
+  background-color: #2E2C2C !important;
+  border-bottom: none !important;
+  padding-top: 0 !important;
+}
+
+:global(.react-datepicker__day) {
+  color: #FFF !important;
+  margin: 0.2rem !important;
+  width: 2rem !important;
+  line-height: 2rem !important;
+  border-radius: 4px !important;
+}
+
+:global(.react-datepicker__day:hover) {
+  background-color: rgba(234, 238, 221, 0.1) !important;
+}
+
+:global(.react-datepicker__day--selected) {
+  background-color: #FFF !important;
+  color: #2E2C2C !important;
+  font-weight: bold !important;
+}
+
+:global(.react-datepicker__day--disabled) {
+  color: rgba(234, 238, 221, 0.3) !important;
+  cursor: not-allowed !important;
+}
+
+:global(.react-datepicker__day--keyboard-selected) {
+  background-color: rgba(234, 238, 221, 0.2) !important;
+  color: #FFF !important;
+}
+
+:global(.react-datepicker__day--outside-month) {
+  color: rgba(234, 238, 221, 0.3) !important;
+}
+
+:global(.react-datepicker__navigation) {
+  top: 8px !important;
+}
+
+:global(.react-datepicker__navigation--previous) {
+  left: 8px !important;
+}
+
+:global(.react-datepicker__navigation--next) {
+  right: 8px !important;
+}
+
+:global(.react-datepicker__current-month) {
+  color: #FFF !important;
+  padding: 8px 0 !important;
+  font-weight: 500 !important;
+}
+
+:global(.react-datepicker__day-name) {
+  color: #FFF !important;
+  font-weight: 500 !important;
+  margin: 0.2rem !important;
+  width: 2rem !important;
+  line-height: 2rem !important;
+}
+
+:global(.react-datepicker__triangle) {
+  display: none !important;
+} 

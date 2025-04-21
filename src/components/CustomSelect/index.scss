@@ -1,0 +1,18 @@
+.CustomSelect {
+  &__options {
+    padding: 15px 0px 15px 40px;
+    button {
+      text-transform: capitalize;
+      font-weight: 600;
+      font-size: 19px;
+      margin-bottom: 5px;
+      transition: all 0.2s;
+    }
+    .activeOption {
+      color: black;
+      background-color: rgba(255, 255, 255, 0.99);
+      padding: 2px 40px 2px 10px;
+      border-radius: 8px;
+    }
+  }
+}

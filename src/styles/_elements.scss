@@ -1,0 +1,72 @@
+:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+::-webkit-scrollbar {
+    width: var(--scrollbar-thickness);
+    height: var(--scrollbar-thickness);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    min-width: 30px;
+    min-height: 30px;
+    background: var(--scrollbar-thumb);
+    background-clip: content-box;
+}
+
+[data-scroll-offset] {
+    overflow-y: scroll;
+}
+
+[data-scroll-offset="with-padding"],
+[data-scroll-offset] .with-padding {
+    padding-top: var(--header-height);
+}
+
+[data-scroll-offset]::-webkit-scrollbar-thumb {
+    border-top: var(--header-height) solid transparent;
+    background-clip: content-box;
+}
+
+[data-avoids-navigation]::-webkit-scrollbar-thumb {
+    border-bottom: var(--effective-bottom-offset) solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+
+::selection {
+    background: var(--foreground);
+    color: var(--background);
+}
+
+::-webkit-selection {
+    background: var(--foreground);
+    color: var(--background);
+}
+
+a,
+a:link,
+a:visited,
+a:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+hr {
+    height: 1px;
+    flex-grow: 1;
+    border: 0;
+}
+
+foreignObject > svg {
+    vertical-align: top !important;
+}

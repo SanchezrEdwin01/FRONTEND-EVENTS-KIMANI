@@ -1,0 +1,15 @@
+.heading {
+  text-transform: uppercase;
+  font-family: var(--font-roboto);
+  font-size: 20px;
+  cursor: pointer;
+  &:hover:not(.no-transition) {
+    svg {
+      margin-left: 5px;
+    }
+  }
+  svg {
+    font-size: 35px;
+    transition: 0.2s all ease-in-out;
+  }
+}

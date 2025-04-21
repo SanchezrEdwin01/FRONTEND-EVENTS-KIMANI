@@ -1,0 +1,59 @@
+// Variables for consistent theming
+$colors: (
+  'primary': #CA9935,
+  'secondary': #EAEEDD,
+  'dark': #2E2C2C,
+  'light': #ffffff
+);
+
+// Base dimensions
+$base-dimensions: (
+  'width': 7.5rem,
+  'height': 1.875rem,
+  'border-radius': 0.5rem,
+  'font-size': 1rem
+);
+
+// Scale factor for mobile
+$mobile-scale: 0.75;
+
+// Mixin for responsive scaling
+@mixin responsive-scale($property, $desktop-value) {
+  #{$property}: $desktop-value;
+  
+  @media screen and (max-width: 399px) {
+    #{$property}: $desktop-value * $mobile-scale;
+  }
+}
+
+// Base event tag styles
+.event-tag {
+  @include responsive-scale('width', map-get($base-dimensions, 'width'));
+  @include responsive-scale('height', map-get($base-dimensions, 'height'));
+  @include responsive-scale('border-radius', map-get($base-dimensions, 'border-radius'));
+  @include responsive-scale('font-size', map-get($base-dimensions, 'font-size'));
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'HankenGrotesk', sans-serif;
+  font-weight: 400;
+font-size: 16px;
+font-style: normal;
+line-height: normal;
+  // Event type variations
+  &.kimani-event {
+    background-color: map-get($colors, 'primary');
+    color: map-get($colors, 'light');
+  }
+
+  &.member-event {
+    background-color: map-get($colors, 'secondary');
+    color: map-get($colors, 'dark');
+  }
+
+  &.other-event {
+    background-color: map-get($colors, 'dark');
+    color: map-get($colors, 'light');
+  }
+}

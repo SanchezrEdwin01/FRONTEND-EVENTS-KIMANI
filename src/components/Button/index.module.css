@@ -1,0 +1,86 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  position: relative;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+}
+
+.contentWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.leftIcon, .rightIcon {
+  display: flex;
+  align-items: center;
+  width: 2.66ch;
+}
+
+/* Size variants */
+.sm {
+  font-size: 12px;
+  padding: 5px 0;
+}
+
+.md {
+  /* Default size */
+}
+
+.lg {
+  font-size: 16px;
+  padding: 9px 0;
+}
+
+/* Loading spinner */
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loadingSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-left-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Variant styles */
+.outline:hover:not(:disabled) {
+  background-color: rgba(234, 238, 221, 0.1);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: rgba(234, 238, 221, 0.1);
+}

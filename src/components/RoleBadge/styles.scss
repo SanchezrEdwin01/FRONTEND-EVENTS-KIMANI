@@ -1,0 +1,38 @@
+$badge-width: 355px;
+$badge-height: 35px;
+$profile-size: 24px;
+$border-radius-lg: 8px;
+$border-radius-circle: 50%;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$dark-bg: #2e2c2c;
+$text-color: #ffffff;
+
+.badge {
+  block-size: $badge-height;
+  padding-inline: $spacing-sm;
+  margin-block: $spacing-xs;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: $dark-bg;
+  border-radius: $border-radius-lg;
+}
+
+.text {
+  font: {
+    family: var(--font-hanken-grotesk), sans-serif;
+    size: 16px;
+    weight: 400;
+  }
+  color: $text-color;
+}
+
+.profilePicture {
+  inline-size: $profile-size;
+  block-size: $profile-size;
+  border-radius: $border-radius-circle;
+  object-fit: cover;
+}

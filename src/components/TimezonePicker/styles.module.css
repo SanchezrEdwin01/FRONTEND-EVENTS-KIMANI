@@ -1,0 +1,79 @@
+.timezonePickerContainer {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  width: 100%;
+}
+
+.timezoneDisplay {
+  background-color: rgba(120, 120, 128, 0.24);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+  text-align: left;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.timezoneDisplay:hover {
+  background-color: rgba(120, 120, 128, 0.3);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background-color: #2E2C2C;
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 250px;
+  max-width: 300px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.timezoneOption {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.timezoneOption span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.timezoneOption:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.selected {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+} 

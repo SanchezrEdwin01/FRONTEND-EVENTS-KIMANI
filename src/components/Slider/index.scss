@@ -1,0 +1,30 @@
+.splide__slide {
+  transition: all 0.2s;
+  transform: scale(0.9);
+  &.is-visible.is-active:not(.splide__slide--clone) {
+    transform: scale(1);
+  }
+}
+.splide:after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, transparent 0%, #00000087 100%);
+  z-index: 3;
+  width: 50px;
+  top: 5%;
+  height: 91%;
+}
+.splide:before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to left, transparent 0%, #00000087 100%);
+  z-index: 4;
+  width: 50px;
+  height: 91%;
+}

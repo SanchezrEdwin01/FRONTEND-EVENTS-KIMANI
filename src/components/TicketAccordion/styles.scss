@@ -1,0 +1,169 @@
+// VARIABLES
+$primary-color: #FFFFFF;
+$background-color: #252323;
+$border-radius: 8px;
+$font-family: 'HankenGrotesk', sans-serif;
+$spacing-base: 8px;
+$icon-size-small: 24px;
+$icon-size-large: 35px;
+
+// TYPOGRAPHY
+$font-size-small: 14px;
+$font-size-base: 16px;
+$font-size-large: 30px;
+
+// WEIGHTS
+$font-light: 300;
+$font-regular: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+
+// DIMENSIONS
+$accordion-width: 355px;
+$accordion-height: 65px;
+
+// MIXINS
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin icon($size) {
+  width: $size;
+  height: $size;
+}
+
+@mixin base-text {
+  font-family: $font-family;
+  color: $primary-color;
+}
+
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ticket-accordion {
+  width: 100%;
+  min-height: $accordion-height;
+  border: 0.5px solid $primary-color;
+  border-radius: $border-radius;
+  margin-bottom: $spacing-base;
+  background-color: $background-color;
+  @include base-text;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+
+  &.active {
+    border: 0.5px solid $primary-color;
+  }
+
+  .ticket-main {
+    @include flex-between;
+    padding: #{$spacing-base * 1.5} #{$spacing-base * 2};
+    height: $accordion-height;
+  }
+
+  .ticket-info {
+    @include flex-center;
+    gap: #{$spacing-base * 2};
+
+    .type-icon {
+      @include icon($icon-size-small);
+    }
+
+    .ticket-text {
+      display: flex;
+      flex-direction: column;
+      gap: #{$spacing-base / 2};
+
+      .ticket-type, .ticket-price {
+        font-size: $font-size-base;
+      }
+
+      .ticket-type { font-weight: $font-semibold; }
+      .ticket-price { font-weight: $font-bold; }
+    }
+  }
+
+  .expand-icon {
+    @include icon($icon-size-small);
+    cursor: pointer;
+  }
+
+  .ticket-details {
+    padding: #{$spacing-base * 2};
+    margin-left: #{$spacing-base * 5};
+    font-size: $font-size-small;
+    font-weight: $font-light;
+    
+    .price-includes h3 {
+      margin-bottom: #{$spacing-base * 1.5};
+      font-weight: $font-semibold;
+    }
+
+    .fee-item {
+      @include flex-between;
+      margin-bottom: $spacing-base;
+    }
+
+    .availability {
+      margin-top: #{$spacing-base * 2};
+      font-weight: $font-medium;
+    }
+  }
+
+  .ticket-counter {
+    @include flex-center;
+    gap: #{$spacing-base * 1.5};
+    position: relative;
+    
+    .ticket-wrapper {
+      position: relative;
+      
+      .ticket-icon {
+        @include icon($icon-size-large);
+      }
+      
+      .count {
+        @include absolute-center;
+        color: $background-color;
+        font-weight: $font-semibold;
+      }
+    }
+
+    .counter-button {
+      @include base-text;
+      cursor: pointer;
+      font-weight: $font-semibold;
+      font-size: $font-size-large;
+      background: none;
+      border: none;
+      padding: 0 $spacing-base;
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.sold-out-message {
+  @include base-text;
+  padding: #{$spacing-base * 2};
+  text-align: center;
+  font-size: $font-size-small;
+  font-weight: $font-regular;
+}

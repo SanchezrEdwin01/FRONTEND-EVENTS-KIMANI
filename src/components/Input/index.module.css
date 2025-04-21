@@ -1,0 +1,69 @@
+.fieldContainer {
+    width: 100%;
+  }
+
+  .inputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .inputWrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .input {
+    padding: 10px;
+    background-color: #2E2C2C;
+    border: none;
+    border-radius: 8px;
+    line-height: 1.5;
+    width: 100%;
+    color: #ffffff;
+    transition: all 0.2s ease;
+  }
+
+  .input::placeholder {
+    color: #ffffff;
+  }
+
+  .input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .input.error {
+    border: 1px solid #ff4d4d;
+  }
+
+  .errorMessage {
+    font-size: 12px;
+    color: #ff4d4d;
+  }
+
+  textarea.input {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  /* Disabled state */
+  .input.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Visually hidden class for accessibility */
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }

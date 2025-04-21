@@ -1,0 +1,71 @@
+.timePickerContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.timeDisplay {
+  background-color: rgba(120, 120, 128, 0.24);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+  min-width: 100px;
+  text-align: center;
+  transition: background-color 0.2s ease;
+}
+
+.timeDisplay:hover {
+  background-color: rgba(120, 120, 128, 0.3);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background-color: #2E2C2C;
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 108px;
+  @media (max-width: 768px) {
+    left: -65px;
+  }
+}
+.dropdown.startTime {
+  left: 0 !important;
+}
+.timeOption {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.timeOption.selected:not(.startTime) {
+  min-width: 155px;
+}
+
+.timeOption:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.selected {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.timeDiff {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  margin-left: 8px;
+} 
