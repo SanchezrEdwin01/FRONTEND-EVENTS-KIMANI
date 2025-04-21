@@ -1,10 +1,11 @@
-# KIMANI Events
+
 
 <div align="center">
   <img src="https://community.kimanilife.com/assets/logo.webp" alt="Kimani Logo" width="200"/>
 </div>
 
-A modern event management application built with React, Vite, TypeScript and Tailwind.
+# Events
+A modern event management application built with React, Vite, TypeScript and Tailwind for Kimani Life.
 
 ## 🚀 Features
 
