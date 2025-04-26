@@ -7,11 +7,13 @@ import {
 import './index.scss';
 import React, { memo } from 'react';
 import { useUser } from '@/context/UserContext';
+import { useBaseURL } from '@/hooks/useBaseURL';
 import UserIcon from '../UserIcon';
-import { BASE_URL } from '@/utils/constants';
 
 const Footer = () => {
   const { user } = useUser();
+  const BASE_URL = useBaseURL();
+
   return (
     <footer>
       <div className="navigation">
