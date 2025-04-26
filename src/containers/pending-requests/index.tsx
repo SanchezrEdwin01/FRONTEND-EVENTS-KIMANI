@@ -22,11 +22,9 @@ export default function PendingRequests() {
     [guests]
   );
   const groupedPendingGuests = useMemo(() => {
-    
     const groups = pendingGuests?.reduce(
       (acc, guest) => {
         if (guest.plus_one_of) {
-          
           if (!acc[guest.plus_one_of]) {
             acc[guest.plus_one_of] = {
               main_contact: null,
@@ -36,7 +34,6 @@ export default function PendingRequests() {
             acc[guest.plus_one_of].additional_guests.push(guest);
           }
         } else {
-          
           if (!acc[guest._id]) {
             acc[guest._id] = {
               main_contact: guest,
@@ -51,18 +48,15 @@ export default function PendingRequests() {
       {} as Record<string, { main_contact: any; additional_guests: any[] }>
     );
 
-    
     return Object.values(groups || {}).filter(group => group.main_contact);
   }, [pendingGuests]);
 
   const [openAccordion, setOpenAccordion] = React.useState<number | null>(null);
 
-  
   const [checkedGuests, setCheckedGuests] = React.useState<
     Record<string, boolean>
   >({});
 
-  
   React.useEffect(() => {
     if (pendingGuests) {
       const initialChecked = pendingGuests.reduce(
@@ -78,7 +72,7 @@ export default function PendingRequests() {
 
   const handleApprove = useCallback(
     guest => {
-      if (processingGuestId) return; 
+      if (processingGuestId) return;
 
       setProcessingGuestId(guest?.main_contact?._id);
       const guestUpdates = guest?.additional_guests?.map(_guest => ({
@@ -114,7 +108,7 @@ export default function PendingRequests() {
 
   const handleDecline = useCallback(
     guest => {
-      if (processingGuestId) return; 
+      if (processingGuestId) return;
 
       setProcessingGuestId(guest?.main_contact?._id);
       const guestUpdates = guest?.additional_guests?.map(_guest => ({
@@ -172,10 +166,8 @@ export default function PendingRequests() {
                           const isChecked = checkedGuests[main_contact._id];
                           const updatedChecked = { ...checkedGuests };
 
-                          
                           updatedChecked[main_contact._id] = !isChecked;
 
-                          
                           guests?.forEach(guest => {
                             updatedChecked[guest._id] = !isChecked;
                           });
@@ -190,7 +182,7 @@ export default function PendingRequests() {
                         />
                         {checkedGuests[main_contact._id] ? (
                           <svg
-                            xmlns="http:
+                            xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
                             viewBox="0 0 32 32"
@@ -204,7 +196,7 @@ export default function PendingRequests() {
                           </svg>
                         ) : (
                           <svg
-                            xmlns="http:
+                            xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
                             viewBox="0 0 32 32"
@@ -235,7 +227,7 @@ export default function PendingRequests() {
                         className={`ml-auto transform transition-transform duration-200 ${openAccordion === index ? 'rotate-180' : ''}`}
                       >
                         <svg
-                          xmlns="http:
+                          xmlns="http://www.w3.org/2000/svg"
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
@@ -319,7 +311,7 @@ export default function PendingRequests() {
                                       />
                                       {checkedGuests[guest._id] ? (
                                         <svg
-                                          xmlns="http:
+                                          xmlns="http://www.w3.org/2000/svg"
                                           width="24"
                                           height="24"
                                           viewBox="0 0 32 32"
@@ -333,7 +325,7 @@ export default function PendingRequests() {
                                         </svg>
                                       ) : (
                                         <svg
-                                          xmlns="http:
+                                          xmlns="http://www.w3.org/2000/svg"
                                           width="24"
                                           height="24"
                                           viewBox="0 0 32 32"

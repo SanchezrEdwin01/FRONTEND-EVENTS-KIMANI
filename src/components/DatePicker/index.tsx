@@ -30,7 +30,6 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const datePickerRef = useRef<DatePicker>(null);
 
-  
   const formatDate = (date: Date): string => {
     return date.toLocaleString('en-US', {
       month: 'short',
@@ -39,25 +38,18 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
     });
   };
 
-  
   const handleDateChange = (date: Date | null) => {
     if (date) {
       onChange(date);
 
-      
       if (isStartDate && endDate && onEndDateChange) {
-        
         if (date > endDate) {
-          
           onEndDateChange(date);
         }
       }
 
-      
       if (!isStartDate && startDate && onStartDateChange) {
-        
         if (date < startDate) {
-          
           onStartDateChange(date);
         }
       }
@@ -66,7 +58,6 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
-  
   const toggleDatePicker = () => {
     setIsOpen(!isOpen);
     if (!isOpen && datePickerRef.current) {
@@ -74,33 +65,26 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
-  
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  
   const goToToday = () => {
     const now = new Date();
     setCurrentMonth(now);
 
-    
     if (datePickerRef.current) {
-      
       datePickerRef.current.setMonth(now.getMonth());
-      
+
       datePickerRef.current.setYear(now.getFullYear());
     }
 
-    
     handleDateChange(now);
   };
 
-  
   const formatDayName = (dateStr: string) => {
     return dateStr.charAt(0);
   };
 
-  
   const formatMonthHeader = (date: Date) => {
     const currentYear = new Date().getFullYear();
     const monthYear = date.toLocaleString('default', { month: 'long' });
@@ -157,7 +141,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                       className={`${styles.navButton} ${styles.navButtonLeft}`}
                     >
                       <svg
-                        xmlns="http:
+                        xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 16 16"
                       >
@@ -177,7 +161,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                       className={styles.navButton}
                     >
                       <svg
-                        xmlns="http:
+                        xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 16 16"
                       >
