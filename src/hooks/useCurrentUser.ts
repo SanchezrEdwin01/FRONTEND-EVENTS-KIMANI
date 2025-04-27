@@ -3,8 +3,23 @@ import { apiClient } from '@/lib/api-client';
 import { User } from '@/types';
 import { AxiosError } from 'axios';
 import { getUrlParameter } from '@/utils/utils';
+import { BASE_URL_KEY } from '@/utils/constants';
 
 const CACHE_KEY = 'currentUser';
+
+function setBaseUrl() {
+  const baseUrl = getUrlParameter('native');
+  if (baseUrl !== null) {
+    try {
+      const url = new URL(baseUrl);
+      if (url.origin) {
+        localStorage.setItem(BASE_URL_KEY, url.origin);
+      }
+    } catch (error) {
+      localStorage.setItem(BASE_URL_KEY, 'http://localhost');
+    }
+  }
+}
 
 export const useCurrentUser = () => {
   const queryClient = useQueryClient();
@@ -14,13 +29,14 @@ export const useCurrentUser = () => {
     queryFn: async () => {
       const urlToken = getUrlParameter('token');
       if (urlToken) {
+        setBaseUrl();
         localStorage.setItem('token', urlToken);
         apiClient.defaults.headers.common['X-Session-Token'] = urlToken;
       }
 
       const headerToken = apiClient.defaults.headers.common['X-Session-Token'];
-      const localStorageToken = localStorage.getItem('token'); 
-      
+      const localStorageToken = localStorage.getItem('token');
+
       if (!urlToken && !headerToken && !localStorageToken) {
         return false;
       }
@@ -42,6 +58,6 @@ export const useCurrentUser = () => {
     retry: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    enabled: true,
+    enabled: true
   });
-}; 
+};

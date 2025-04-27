@@ -188,12 +188,10 @@ const NewEvent = () => {
       const fieldData = formData[field];
       if (!fieldData) return false;
 
-      
       if (field === 'startDate' || field === 'endDate') {
         return true;
       }
 
-      
       if (field === 'eventType' || field === 'city' || field === 'country') {
         return !!fieldData.value;
       }
@@ -262,7 +260,6 @@ const NewEvent = () => {
       }
 
       setFormData(prev => {
-        
         if (key === 'country') {
           return {
             ...prev,
@@ -275,7 +272,6 @@ const NewEvent = () => {
           };
         }
 
-        
         return {
           ...prev,
           [key]: {
@@ -314,7 +310,6 @@ const NewEvent = () => {
       const galleryIds: string[] = [];
       const attachmentIds: string[] = [];
 
-      
       if (formData.eventImage.value) {
         const imageResponse = await uploadAttachmentMutation.mutateAsync(
           formData.eventImage.value
@@ -324,7 +319,6 @@ const NewEvent = () => {
         }
       }
 
-      
       if (formData.galleryImages.value.length > 0) {
         const galleryUploads = await Promise.all(
           formData.galleryImages.value.map(file =>
@@ -340,7 +334,6 @@ const NewEvent = () => {
         );
       }
 
-      
       if (formData.attachedFile.value) {
         const attachmentResponse = await uploadAttachmentMutation.mutateAsync(
           formData.attachedFile.value
@@ -366,7 +359,7 @@ const NewEvent = () => {
         ticket_config: {
           is_paid: formData.plan.value === 'paid',
           allow_multiple_tickets: formData.allowMultipleTickets.value,
-          
+
           ...(formData.plan.value === 'paid' && {
             member_price: formData.memberPrice.value,
             member_max_tickets: Number.parseInt(
@@ -384,7 +377,6 @@ const NewEvent = () => {
         timezone: formData.timezone.value
       };
 
-      
       if (formData.isHidden.value) eventData.hide_address = true;
       if (formData.allowPlusOne.value) {
         eventData.allow_plus_one = true;
@@ -396,24 +388,21 @@ const NewEvent = () => {
         eventData.requires_rsvp_approval = true;
       if (formData.showEventToNonMembers.value)
         eventData.show_to_non_members = true;
-      
+
       const hosts = [formData.host.value, formData.coHost.value].filter(
         Boolean
       );
       if (hosts.length > 0) eventData.hosts = hosts;
 
-      
       const sponsors = [
         formData.sponsor1.value,
         formData.sponsor2.value
       ].filter(Boolean);
       if (sponsors.length > 0) eventData.sponsors = sponsors;
 
-      
       if (galleryIds.length > 0) eventData.gallery = galleryIds;
       if (attachmentIds.length > 0) eventData.attachments = attachmentIds;
 
-      
       if (formData.description.value) {
         eventData.description = formData.description.value;
       }
@@ -435,12 +424,10 @@ const NewEvent = () => {
         },
         onError: error => {
           console.error('Error creating event:', error);
-          
         }
       });
     } catch (error) {
       console.error('Error creating event:', error);
-      
     } finally {
       setIsLoading(false);
     }
@@ -462,14 +449,12 @@ const NewEvent = () => {
   );
 
   const { filteredCities } = useMemo(() => {
-    
     if (!formData.country.value) {
       return {
         filteredCities: []
       };
     }
 
-    
     const selectedCountry = countryOptions.find(
       country => country.country === formData.country.value
     );
@@ -480,7 +465,6 @@ const NewEvent = () => {
       };
     }
 
-    
     const cities = selectedCountry.cities
       .map(city => ({
         label: city.city,
@@ -569,12 +553,10 @@ const NewEvent = () => {
                           const newDate = new Date(formData.startDate.value);
                           newDate.setHours(date.getHours());
 
-                          
                           const currentMinutes = date.getMinutes();
                           const roundedMinutes = currentMinutes < 30 ? 0 : 30;
                           newDate.setMinutes(roundedMinutes);
 
-                          
                           newDate.setSeconds(0);
 
                           handleInputChange('startDate', newDate);
@@ -601,12 +583,10 @@ const NewEvent = () => {
                           const newDate = new Date(formData.endDate.value);
                           newDate.setHours(date.getHours());
 
-                          
                           const currentMinutes = date.getMinutes();
                           const roundedMinutes = currentMinutes < 30 ? 0 : 30;
                           newDate.setMinutes(roundedMinutes);
 
-                          
                           newDate.setSeconds(0);
 
                           handleInputChange('endDate', newDate);
@@ -648,7 +628,7 @@ const NewEvent = () => {
                 onCityChange={city => handleInputChange('city', city)}
                 onCountryChange={country => {
                   handleInputChange('country', country);
-                  
+
                   if (country) {
                     const timezone = countryTimezones[country] || 'UTC';
                     handleInputChange('timezone', timezone);
@@ -777,8 +757,8 @@ const NewEvent = () => {
               <AttachFileButton
                 wrapperClassName="mb-3"
                 onFileSelect={file => handleInputChange('attachedFile', file)}
-                accept=".pdf,.doc,.docx,.txt" 
-                maxSize={5} 
+                accept=".pdf,.doc,.docx,.txt"
+                maxSize={5}
               />
 
               {formData.attachedFile.value && (
@@ -789,7 +769,7 @@ const NewEvent = () => {
                     className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     <svg
-                      xmlns="http:
+                      xmlns="http://www.w3.org/2000/svg"
                       width="20"
                       height="20"
                       viewBox="0 0 24 24"

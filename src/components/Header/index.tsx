@@ -2,9 +2,12 @@ import React from 'react';
 import TabbedNavigation from '@/components/TabbedNavigation';
 import { MenuOutline } from 'styled-icons/evaicons-outline';
 import Dropdown from '@/components/Dropdown';
+import { useBaseURL } from '@/hooks/useBaseURL';
 import './index.scss';
-import { BASE_URL } from '@/utils/constants';
+
 const Header = () => {
+  const BASE_URL = useBaseURL();
+
   return (
     <header className="header">
       <div className="hero">

@@ -42,7 +42,7 @@ export default function SuccessStep({ event }: { event: Event }) {
           className="w-[38px] h-[38px] overflow-hidden mb-[5px]"
         >
           <svg
-            xmlns="http:
+            xmlns="http://www.w3.org/2000/svg"
             width="38"
             height="38"
             viewBox="0 0 38 38"

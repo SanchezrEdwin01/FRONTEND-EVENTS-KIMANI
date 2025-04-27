@@ -1,7 +1,12 @@
 // TODO: Make these configurable
-export const BASE_URL = 'https://staging.kimanilife.com';
-export const API_URL = 'https://staging.kimanilife.com/api';
-export const AUTUMN_API_URL = 'https://staging.kimanilife.com/autumn';
+export const BASE_URL_KEY = 'base_url';
+export const BASE_URL =
+  import.meta.env.VITE_BASE_URL || 'https://staging.kimanilife.com';
+export const API_URL =
+  import.meta.env.VITE_API_URL || 'https://staging.kimanilife.com/api';
+export const AUTUMN_API_URL =
+  import.meta.env.VITE_AUTUMN_API_URL ||
+  'https://staging.kimanilife.com/autumn';
 export const PLATFORM_URL = `${BASE_URL}/events`;
 export const EVENT_TYPE_ALL = 'all';
 export const EVENT_TYPE_KIMANI = 'KimaniEvent';
@@ -28,5 +33,8 @@ export const TYPES = [
     value: EVENT_TYPE_OTHER
   }
 ];
-export const DEFAULT_SERVER_ID = '01HP41709DFJP1DRSTSA88J81A';
-export const GOOGLE_MAPS_API_KEY = 'AIzaSyAHFo6a0yqcyCnr1nZn4n65GF1DzVcb6uY';
+export const DEFAULT_SERVER_ID =
+  import.meta.env.VITE_DEFAULT_SERVER_ID || '01HP41709DFJP1DRSTSA88J81A';
+export const GOOGLE_MAPS_API_KEY =
+  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
+  'AIzaSyAHFo6a0yqcyCnr1nZn4n65GF1DzVcb6uY';

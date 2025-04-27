@@ -153,7 +153,7 @@ const EditEvent = ({ eventId: propEventId }) => {
   const [step, setStep] = useState(1);
   const [hasFormChanges, setHasFormChanges] = useState(false);
   const [saveStatus, setSaveStatus] = useState(false);
-  
+
   useEffect(() => {
     if (event) {
       setFormData(prev => ({
@@ -255,7 +255,6 @@ const EditEvent = ({ eventId: propEventId }) => {
           ]);
           break;
 
-        
         case 'isHidden':
         case 'allowPlusOne':
         case 'requirePlusOneInfo':
@@ -264,7 +263,6 @@ const EditEvent = ({ eventId: propEventId }) => {
           validationResult = { isValid: true, error: '' };
           break;
 
-        
         case 'thumbnail':
         case 'gallery':
         case 'attachedFile':
@@ -288,7 +286,6 @@ const EditEvent = ({ eventId: propEventId }) => {
       setHasFormChanges(true);
 
       setFormData(prev => {
-        
         if (key === 'country') {
           return {
             ...prev,
@@ -302,7 +299,6 @@ const EditEvent = ({ eventId: propEventId }) => {
           };
         }
 
-        
         return {
           ...prev,
           [key]: {
@@ -326,7 +322,6 @@ const EditEvent = ({ eventId: propEventId }) => {
     const galleryIds: string[] = [];
     const attachmentIds: string[] = [];
 
-    
     if (formData.thumbnail.changed && formData.thumbnail.value) {
       const thumbnailResponse = await uploadAttachmentMutation.mutateAsync(
         formData.thumbnail.value
@@ -336,7 +331,6 @@ const EditEvent = ({ eventId: propEventId }) => {
       }
     }
 
-    
     if (formData.gallery.changed && formData.gallery.value.length > 0) {
       const galleryUploads = await Promise.all(
         formData.gallery.value.map(file =>
@@ -350,7 +344,6 @@ const EditEvent = ({ eventId: propEventId }) => {
       });
     }
 
-    
     if (formData.attachedFile.changed && formData.attachedFile.value) {
       const attachmentResponse = await uploadAttachmentMutation.mutateAsync(
         formData.attachedFile.value
@@ -360,7 +353,6 @@ const EditEvent = ({ eventId: propEventId }) => {
       }
     }
 
-    
     const changedFields = Object.entries(formData).reduce(
       (acc, [key, field]) => {
         const mappings = {
@@ -396,7 +388,6 @@ const EditEvent = ({ eventId: propEventId }) => {
           } else if (key === 'attachedFile') {
             acc[apiField] = attachmentIds;
           } else if (key === 'timezone') {
-            
             acc[apiField] = field.value;
           } else {
             acc[apiField] = field.value;
@@ -410,7 +401,6 @@ const EditEvent = ({ eventId: propEventId }) => {
     try {
       await updateEvent({ eventId: finalEventId, eventData: changedFields });
 
-      
       setFormData(prev => {
         const resetFields = {};
         Object.keys(prev).forEach(key => {
@@ -452,14 +442,12 @@ const EditEvent = ({ eventId: propEventId }) => {
     });
   }, []);
   const { filteredCities } = useMemo(() => {
-    
     if (!formData.country.value) {
       return {
         filteredCities: []
       };
     }
 
-    
     const selectedCountry = countryOptions.find(
       country => country.country === formData.country.value
     );
@@ -470,7 +458,6 @@ const EditEvent = ({ eventId: propEventId }) => {
       };
     }
 
-    
     const cities = selectedCountry.cities
       .map(city => ({
         label: city.city,
@@ -483,7 +470,6 @@ const EditEvent = ({ eventId: propEventId }) => {
     };
   }, [formData.country.value, countryOptions]);
 
-  
   if (loading) {
     return (
       <Layout hideHeader={false} hideFooter={true}>
@@ -494,7 +480,6 @@ const EditEvent = ({ eventId: propEventId }) => {
     );
   }
 
-  
   if (error || !event) {
     return (
       <ErrorScreen
@@ -577,12 +562,10 @@ const EditEvent = ({ eventId: propEventId }) => {
                           const newDate = new Date(formData.startDate.value);
                           newDate.setHours(date.getHours());
 
-                          
                           const currentMinutes = date.getMinutes();
                           const roundedMinutes = currentMinutes < 30 ? 0 : 30;
                           newDate.setMinutes(roundedMinutes);
 
-                          
                           newDate.setSeconds(0);
 
                           handleInputChange('startDate', newDate);
@@ -609,12 +592,10 @@ const EditEvent = ({ eventId: propEventId }) => {
                           const newDate = new Date(formData.endDate.value);
                           newDate.setHours(date.getHours());
 
-                          
                           const currentMinutes = date.getMinutes();
                           const roundedMinutes = currentMinutes < 30 ? 0 : 30;
                           newDate.setMinutes(roundedMinutes);
 
-                          
                           newDate.setSeconds(0);
 
                           handleInputChange('endDate', newDate);
@@ -647,7 +628,7 @@ const EditEvent = ({ eventId: propEventId }) => {
                 onCityChange={city => handleInputChange('city', city)}
                 onCountryChange={country => {
                   handleInputChange('country', country);
-                  
+
                   if (country) {
                     const timezone = countryTimezones[country] || 'UTC';
                     handleInputChange('timezone', timezone);
@@ -761,8 +742,8 @@ const EditEvent = ({ eventId: propEventId }) => {
               </h5>
               <AttachFileButton
                 onFileSelect={file => handleInputChange('attachedFile', file)}
-                accept=".pdf,.doc,.docx,.txt" 
-                maxSize={5} 
+                accept=".pdf,.doc,.docx,.txt"
+                maxSize={5}
                 wrapperClassName="mb-3"
               />
 
@@ -777,7 +758,7 @@ const EditEvent = ({ eventId: propEventId }) => {
                     className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     <svg
-                      xmlns="http:
+                      xmlns="http://www.w3.org/2000/svg"
                       width="20"
                       height="20"
                       viewBox="0 0 24 24"
