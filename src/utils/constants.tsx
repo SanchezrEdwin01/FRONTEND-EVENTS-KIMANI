@@ -1,12 +1,12 @@
 // TODO: Make these configurable
 export const BASE_URL_KEY = 'base_url';
 export const BASE_URL =
-  import.meta.env.VITE_BASE_URL || 'https://staging.kimanilife.com';
+  import.meta.env.VITE_BASE_URL || 'https://community.kimanilife.com';
 export const API_URL =
-  import.meta.env.VITE_API_URL || 'https://staging.kimanilife.com/api';
+  import.meta.env.VITE_API_URL || 'https://community.kimanilife.com/api';
 export const AUTUMN_API_URL =
   import.meta.env.VITE_AUTUMN_API_URL ||
-  'https://staging.kimanilife.com/autumn';
+  'https://community.kimanilife.com/autumn';
 export const PLATFORM_URL = `${BASE_URL}/events`;
 export const EVENT_TYPE_ALL = 'all';
 export const EVENT_TYPE_KIMANI = 'KimaniEvent';
