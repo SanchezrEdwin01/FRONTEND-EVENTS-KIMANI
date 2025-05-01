@@ -41,15 +41,6 @@ const Header = () => {
             onClick: () => window.open(`${BASE_URL}/global`, '_self')
           },
           {
-            title: 'Corporate',
-            onClick: () => window.open(`${BASE_URL}/corporate`, '_self')
-          },
-          {
-            title: 'Resident',
-            onClick: () => window.open(`${BASE_URL}/resident`, '_self')
-          },
-
-          {
             title: 'Events',
             onClick: () => window.open(`${BASE_URL}/events`, '_self')
           },
@@ -65,6 +56,14 @@ const Header = () => {
             title: 'Concierge',
             onClick: () =>
               window.open('https://www.kimanilife.com/concierge', '_self')
+          },
+          {
+            title: 'Corporate',
+            onClick: () => window.open(`${BASE_URL}/corporate`, '_self')
+          },
+          {
+            title: 'Resident',
+            onClick: () => window.open(`${BASE_URL}/resident`, '_self')
           }
         ]}
         active={'Events'}

@@ -1,11 +1,12 @@
 .header {
-    background-color: rgb(2, 2, 2);
-    padding: 15px 25px 0px;
-    border-radius: 0px 0 20px 20px;
-    margin: 0 0px 16px;
+    background-color: #020202;
+    margin: 6px 4px;
+    border-radius: 16px;
+    padding: 9px 20px 0px;
     z-index: 1;
     position: relative;
     .hero {
+        height: calc(56px * 0.7);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -31,7 +32,7 @@
 .logo {
     picture {
         display: block;
-        width: 120px;
-        height: 35.5px;
+        width: 96px;
+        max-height: 24px;
     }
 }

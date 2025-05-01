@@ -1,15 +1,16 @@
 .tabs {
     display: flex;
-    margin-top: 20px;
-    overflow-x: scroll;
+    margin-top: 16px;
+    overflow-y: scroll;
     margin-right: -10px;
 }
 .tab {
+    font-family: 'Raleway', sans-serif;
     cursor: pointer;
-    padding: 0 0 6px;
-    border-bottom: 2px solid transparent;
-    margin-right: 20px;
-    font-size: 14px;
+    padding: 0;
+    border-bottom: 1px solid transparent;
+    margin-right: 16px;
+    font-size: 10px;
     font-weight: 500;
     transition: all 0.2s;
     &:hover,
