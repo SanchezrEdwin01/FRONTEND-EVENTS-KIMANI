@@ -9,16 +9,7 @@ const CACHE_KEY = 'currentUser';
 
 function setBaseUrl() {
   const baseUrl = getUrlParameter('native');
-  if (baseUrl !== null) {
-    try {
-      const url = new URL(baseUrl);
-      if (url.origin) {
-        localStorage.setItem(BASE_URL_KEY, url.origin);
-      }
-    } catch (error) {
-      localStorage.setItem(BASE_URL_KEY, 'http://localhost');
-    }
-  }
+  if (baseUrl !== null) localStorage.setItem(BASE_URL_KEY, baseUrl);
 }
 
 export const useCurrentUser = () => {
