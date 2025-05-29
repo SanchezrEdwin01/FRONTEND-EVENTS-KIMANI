@@ -1,0 +1,19 @@
+services:
+  # Events platform
+  kimani-events:
+    image: ghcr.io/kimanilife/kimani-events-v2:main
+    restart: always
+    networks:
+      - apps
+    environment:
+      NODE_ENV: production
+      VITE_EVENTS_APP_BASE_PATH: /events
+      VITE_API_URL: https://community.kimanilife.com/api
+      VITE_AUTUMN_URL: https://community.kimanilife.com/autumn
+      VITE_DEFAULT_SERVER_ID: 01HP41709DFJP1DRSTSA88J81A
+      VITE_GOOGLE_MAPS_API_KEY: $VITE_GOOGLE_MAPS_API_KEY
+
+networks:
+  apps:
+    name: kimani-apps
+    external: true
