@@ -1,0 +1,67 @@
+name: Release Version
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+    paths-ignore:
+      - .github/**
+      - "!.github/workflows/release-version.yml"
+      - .dockerignore
+      - .env.example
+      - .prettierrc.json
+      - .stylelintrc.json
+      - .eslintrc.json
+      - .gitignore
+
+jobs:
+  release-version:
+    if: startsWith(github.event.head_commit.message, 'Merge')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Configure GIT Identity
+        run: |
+          git config --global user.email "cicd@kimanilife.com"
+          git config --global user.name "Kimani Agent"
+
+      - name: Run release script
+        env:
+          MESSAGE_TEMPLATE: 'chore(release): 🤖 ${{ github.repository }}:v{{currentTag}}'
+          ISSUES_TEMPLATE: 'https://app.clickup.com/t/{{id}}'
+        run: |
+          if [ "${{ github.ref_name }}" != "main" ]; then
+            PRERELEASE="--prerelease RC";
+          else
+            PRERELEASE="";
+          fi
+          npx --yes standard-version ${PRERELEASE} --releaseCommitMessageFormat "${MESSAGE_TEMPLATE}" --issueUrlFormat "${ISSUES_TEMPLATE}"
+
+      - name: Push changes and tags
+        run: |
+          git fetch --all
+          git push --follow-tags origin HEAD:${{ github.ref_name }}
+
+      # Retrieve the newly created tag and dispatch the Docker build workflow
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+      - name: Dispatch Docker Build workflow
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          event-type: build-on-release
+          client-payload: '{"ref": "${{ github.ref }}", "branch": "${{ github.ref_name }}", "tag": "${{ steps.get_tag.outputs.tag }}"}'
