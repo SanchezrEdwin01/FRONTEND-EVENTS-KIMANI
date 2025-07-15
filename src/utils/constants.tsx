@@ -33,6 +33,8 @@ export const TYPES = [
     value: EVENT_TYPE_OTHER
   }
 ];
+
+export const PORTAL_URL = import.meta.env.VITE_PORTAL_URL ||"https://marketplace.kimanilife.com";
 export const DEFAULT_SERVER_ID =
   import.meta.env.VITE_DEFAULT_SERVER_ID || '01HP41709DFJP1DRSTSA88J81A';
 export const GOOGLE_MAPS_API_KEY =

@@ -3,6 +3,8 @@ import TabbedNavigation from '@/components/TabbedNavigation';
 import { MenuOutline } from 'styled-icons/evaicons-outline';
 import Dropdown from '@/components/Dropdown';
 import { useBaseURL } from '@/hooks/useBaseURL';
+import { useToken } from '@/hooks/useToken';
+import { useMarketPlaceUrl } from '@/hooks/useMarketPlaceUrl';
 import './index.scss';
 
 const Header = () => {
@@ -48,7 +50,7 @@ const Header = () => {
             title: 'Marketplace',
             onClick: () =>
               window.open(
-                'https://www.kimanilife.com/service-providers',
+                `${useMarketPlaceUrl()}/marketplace/portal?origin=${window.location.origin}&token=${useToken()}`,
                 '_self'
               )
           },
