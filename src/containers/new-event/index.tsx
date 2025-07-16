@@ -336,10 +336,18 @@ const NewEvent = () => {
         event_type: 'MembersEvent',
         start_date: saveFormatDate(formData.startDate.value),
         end_date: saveFormatDate(formData.endDate.value),
-        ...(formData.city.value      && { city: formData.city.value }),
-        ...(formData.country.value   && { country: formData.country.value }),
-        ...(formData.area.value      && { area: formData.area.value }),
-        ...(formData.address.value   && { address: formData.address.value }),
+        ...(formData.city.value !== undefined && {
+          city: formData.city.value ?? ''
+        }),
+        ...(formData.country.value !== undefined && {
+          country: formData.country.value ?? ''
+        }),
+        ...(formData.area.value !== undefined && {
+          area: formData.area.value ?? ''
+        }),
+        ...(formData.address.value !== undefined && {
+          address: formData.address.value ?? ''
+        }),
         gallery: galleryIds,
         thumbnail: thumbnailId,
         hosts: [],
@@ -614,6 +622,7 @@ const NewEvent = () => {
                 value={formData.address.value}
                 onChange={e => handleInputChange('address', e.target.value)}
                 error={formData.address.error}
+                className='pb-[10px] mb-[10px]'
               />
               <Select
                 options={countryOptions.map(country => ({

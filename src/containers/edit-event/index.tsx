@@ -59,6 +59,7 @@ const EditEvent = ({ eventId: propEventId }) => {
   const { mutate: updateEvent, isPending } = useEditEvent();
   const uploadAttachmentMutation = useUploadAttachment();
   const navigate = useNavigate();
+  const alwaysInclude = ['country','city','area','address']
   const [formData, setFormData] = useState({
     thumbnail: {
       value: null,
@@ -249,11 +250,8 @@ const EditEvent = ({ eventId: propEventId }) => {
         //   break;
 
         case 'eventType':
-          validationResult = validateAll([
-            required(value, 'Event type')
-          ]);
+          validationResult = validateAll([required(value, 'Event type')]);
           break;
-
 
         case 'startDate':
         case 'endDate':
@@ -385,6 +383,14 @@ const EditEvent = ({ eventId: propEventId }) => {
         };
 
         const apiField = mappings[key];
+
+        if (!apiField) return acc;
+
+        if (alwaysInclude.includes(key)) {
+          acc[apiField] = field.value || '';
+          return acc;
+        }
+
         if (apiField && field.changed) {
           if (key === 'startDate' || key === 'endDate') {
             acc[apiField] = field.value.toISOString();
@@ -633,6 +639,7 @@ const EditEvent = ({ eventId: propEventId }) => {
                 value={formData.address.value}
                 onChange={e => handleInputChange('address', e.target.value)}
                 error={formData.address.error}
+                className='pb-[10px] mb-[10px]'
               />
 
               <Select
