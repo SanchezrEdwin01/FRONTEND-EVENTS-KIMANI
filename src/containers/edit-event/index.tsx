@@ -239,14 +239,21 @@ const EditEvent = ({ eventId: propEventId }) => {
           ]);
           break;
 
+        // case 'eventType':
+        // // case 'city':
+        // // case 'country':
+        //   validationResult = validateAll([
+        //     required(value, key === 'eventType' ? 'Event type'),
+        //     // required(value, 'Country')
+        //   ]);
+        //   break;
+
         case 'eventType':
-        // case 'city':
-        // case 'country':
           validationResult = validateAll([
-            required(value, key === 'eventType' ? 'Event type'),
-            // required(value, 'Country')
+            required(value, 'Event type')
           ]);
           break;
+
 
         case 'startDate':
         case 'endDate':
