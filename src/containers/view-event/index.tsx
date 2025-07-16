@@ -506,6 +506,8 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
 
     const fullAddress = addressParts.join(', ');
 
+    if (!fullAddress) return null;
+
     return (
       <Sections.Location>
         <Separator />
