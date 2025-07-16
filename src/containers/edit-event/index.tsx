@@ -639,6 +639,7 @@ const EditEvent = ({ eventId: propEventId }) => {
                 value={formData.address.value}
                 onChange={e => handleInputChange('address', e.target.value)}
                 error={formData.address.error}
+                className='pb-[10px] mb-[10px]'
               />
 
               <Select

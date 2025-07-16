@@ -622,6 +622,7 @@ const NewEvent = () => {
                 value={formData.address.value}
                 onChange={e => handleInputChange('address', e.target.value)}
                 error={formData.address.error}
+                className='pb-[10px] mb-[10px]'
               />
               <Select
                 options={countryOptions.map(country => ({
