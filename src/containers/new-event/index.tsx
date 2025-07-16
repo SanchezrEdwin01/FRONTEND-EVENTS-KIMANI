@@ -39,7 +39,7 @@ import backIcon from '@/assets/images/back.svg';
 import TimePicker from '@/components/TimePicker';
 import CustomDatePicker from '@/components/DatePicker';
 import TimezonePicker from '../../components/TimezonePicker';
-import AddressAutocomplete from '../../components/AddressAutocomplete';
+// import AddressAutocomplete from '../../components/AddressAutocomplete';
 import CustomDropdown from '../../components/CustomDropdown';
 import { CreateEventPayload } from '@/types';
 import { countryTimezones } from '../../utils/timezones';
@@ -122,10 +122,10 @@ const NewEvent = () => {
     eventImage: { value: null, valid: true, step: 1, error: '' },
     eventTitle: { value: '', valid: false, step: 1, error: '' },
     eventType: { value: '', valid: false, step: 1, error: '' },
-    city: { value: '', valid: false, step: 1, error: '' },
+    city: { value: '', valid: true, step: 1, error: '' },
     isHidden: { value: false, valid: true, step: 1, error: '' },
-    area: { value: '', valid: false, step: 1, error: '' },
-    address: { value: '', valid: false, step: 1, error: '' },
+    area: { value: '', valid: true, step: 1, error: '' },
+    address: { value: '', valid: true, step: 1, error: '' },
     description: { value: '', valid: true, step: 1, error: '' },
     allowPlusOne: { value: false, valid: true, step: 1, error: '' },
     plusOneCount: { value: 1, valid: true, step: 1, error: '' },
@@ -175,10 +175,10 @@ const NewEvent = () => {
     const requiredFieldsStep1 = [
       'eventTitle',
       'eventType',
-      'city',
-      'country',
-      'area',
-      'address',
+      // 'country',
+      // 'city',
+      // 'area',
+      // 'address',
       'startDate',
       'endDate',
       'timezone'
@@ -224,12 +224,11 @@ const NewEvent = () => {
             ]);
             break;
 
-          case 'address':
-          case 'area':
-            validationResult = validateAll([
-              required(value, key === 'address' ? 'Address' : 'Area')
-            ]);
-            break;
+          // case 'address':
+          // case 'area':
+          // case 'city':
+          // case 'country':
+          //   break;
 
           case 'description':
             if (value) {
@@ -240,20 +239,9 @@ const NewEvent = () => {
             break;
 
           case 'eventType':
-          case 'city':
-          case 'country':
           case 'host':
             validationResult = validateAll([
-              required(
-                value,
-                key === 'eventType'
-                  ? 'Event type'
-                  : key === 'city'
-                    ? 'City'
-                    : key === 'country'
-                      ? 'Country'
-                      : 'Host'
-              )
+              required(value, key === 'eventType' ? 'Event type' : 'Host')
             ]);
             break;
         }
@@ -348,10 +336,18 @@ const NewEvent = () => {
         event_type: 'MembersEvent',
         start_date: saveFormatDate(formData.startDate.value),
         end_date: saveFormatDate(formData.endDate.value),
-        city: formData.city.value,
-        country: formData.country.value,
-        area: formData.area.value,
-        address: formData.address.value,
+        ...(formData.city.value !== undefined && {
+          city: formData.city.value ?? ''
+        }),
+        ...(formData.country.value !== undefined && {
+          country: formData.country.value ?? ''
+        }),
+        ...(formData.area.value !== undefined && {
+          area: formData.area.value ?? ''
+        }),
+        ...(formData.address.value !== undefined && {
+          address: formData.address.value ?? ''
+        }),
         gallery: galleryIds,
         thumbnail: thumbnailId,
         hosts: [],
@@ -620,29 +616,20 @@ const NewEvent = () => {
                 </div>
               </div>
 
-              <AddressAutocomplete
-                className="mb-[10px]"
+              <Input
+                label="Address (optional)"
+                name="address"
                 value={formData.address.value}
-                onChange={address => handleInputChange('address', address)}
-                onAreaChange={area => handleInputChange('area', area)}
-                onCityChange={city => handleInputChange('city', city)}
-                onCountryChange={country => {
-                  handleInputChange('country', country);
-
-                  if (country) {
-                    const timezone = countryTimezones[country] || 'UTC';
-                    handleInputChange('timezone', timezone);
-                  }
-                }}
-                placeholder="Address*"
+                onChange={e => handleInputChange('address', e.target.value)}
                 error={formData.address.error}
+                className='pb-[10px] mb-[10px]'
               />
               <Select
                 options={countryOptions.map(country => ({
                   label: country.country,
                   value: country.country
                 }))}
-                placeholder="Country*"
+                placeholder="Country"
                 name="country"
                 onChange={e => {
                   handleInputChange('country', e.target.value);
@@ -656,7 +643,7 @@ const NewEvent = () => {
                 <CustomDropdown
                   wrapperClassName="mt-[10px] mb-[10px]"
                   options={filteredCities}
-                  placeholder={'City*'}
+                  placeholder={'City'}
                   name="city"
                   onChange={value => handleInputChange('city', value)}
                   value={formData.city.value}
@@ -665,7 +652,7 @@ const NewEvent = () => {
                 />
               )}
               <Input
-                label="Area*"
+                label="Area"
                 type="text"
                 name="area"
                 value={formData.area.value}

@@ -74,9 +74,10 @@ const MapLocation: React.FC<MapLocationProps> = ({
       if (!cityName || !isMounted.current) return false;
 
       try {
-        const geocodeUrl = `https:
-          cityName
-        )}&key=${GOOGLE_MAPS_API_KEY}`;
+        const encoded = encodeURIComponent(cityName);
+        const geocodeUrl =
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}` +
+          `&key=${GOOGLE_MAPS_API_KEY}`;
 
         const response = await fetch(geocodeUrl);
         const data = await response.json();
@@ -104,9 +105,10 @@ const MapLocation: React.FC<MapLocationProps> = ({
       if (!addressToGeocode || !isMounted.current) return false;
 
       try {
-        const geocodeUrl = `https:
-          addressToGeocode
-        )}&key=${GOOGLE_MAPS_API_KEY}`;
+        const encoded = encodeURIComponent(addressToGeocode);
+        const geocodeUrl =
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}` +
+          `&key=${GOOGLE_MAPS_API_KEY}`;
 
         const response = await fetch(geocodeUrl);
         const data = await response.json();

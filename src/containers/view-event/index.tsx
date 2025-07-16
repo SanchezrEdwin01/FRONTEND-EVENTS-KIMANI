@@ -506,15 +506,19 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
 
     const fullAddress = addressParts.join(', ');
 
+    if (!fullAddress) return null;
+
     return (
       <Sections.Location>
         <Separator />
         <div className="self-stretch justify-start text-white text-xl font-medium font-['Playfair_Display']">
           Location
         </div>
-        <div className="mt-2 w-full justify-start text-white text-base font-normal font-['Hanken_Grotesk']">
-          {eventData.area || 'Not Specified'}
-        </div>
+        {eventData.area && (
+          <div className="mt-1 w-full justify-start text-white text-base font-normal font-['Hanken_Grotesk']">
+            {eventData.area}
+          </div>
+        )}
         {eventData.address && (
           <div className="w-full justify-start text-white text-base font-normal font-['Hanken_Grotesk']">
             {eventData.address}

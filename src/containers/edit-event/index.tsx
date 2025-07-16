@@ -29,7 +29,7 @@ import { getDisplayImage } from '@/utils/utils';
 import { countryOptions } from '../new-event/newEventHelper';
 import styled from 'styled-components';
 import TimezonePicker from '../../components/TimezonePicker';
-import AddressAutocomplete from '../../components/AddressAutocomplete';
+// import AddressAutocomplete from '../../components/AddressAutocomplete';
 import { countryTimezones } from '../../utils/timezones';
 const BackButton = styled.button`
   position: absolute;
@@ -59,6 +59,7 @@ const EditEvent = ({ eventId: propEventId }) => {
   const { mutate: updateEvent, isPending } = useEditEvent();
   const uploadAttachmentMutation = useUploadAttachment();
   const navigate = useNavigate();
+  const alwaysInclude = ['country','city','area','address']
   const [formData, setFormData] = useState({
     thumbnail: {
       value: null,
@@ -227,10 +228,10 @@ const EditEvent = ({ eventId: propEventId }) => {
           ]);
           break;
 
-        case 'address':
-        case 'area':
-          validationResult = validateAll([required(value, 'Address')]);
-          break;
+        // case 'address':
+        // case 'area':
+        //   validationResult = validateAll([required(value, 'Address')]);
+        //   break;
 
         case 'description':
           validationResult = validateAll([
@@ -239,13 +240,17 @@ const EditEvent = ({ eventId: propEventId }) => {
           ]);
           break;
 
+        // case 'eventType':
+        // // case 'city':
+        // // case 'country':
+        //   validationResult = validateAll([
+        //     required(value, key === 'eventType' ? 'Event type'),
+        //     // required(value, 'Country')
+        //   ]);
+        //   break;
+
         case 'eventType':
-        case 'city':
-        case 'country':
-          validationResult = validateAll([
-            required(value, key === 'eventType' ? 'Event type' : 'City'),
-            required(value, 'Country')
-          ]);
+          validationResult = validateAll([required(value, 'Event type')]);
           break;
 
         case 'startDate':
@@ -378,6 +383,14 @@ const EditEvent = ({ eventId: propEventId }) => {
         };
 
         const apiField = mappings[key];
+
+        if (!apiField) return acc;
+
+        if (alwaysInclude.includes(key)) {
+          acc[apiField] = field.value || '';
+          return acc;
+        }
+
         if (apiField && field.changed) {
           if (key === 'startDate' || key === 'endDate') {
             acc[apiField] = field.value.toISOString();
@@ -432,10 +445,10 @@ const EditEvent = ({ eventId: propEventId }) => {
           [
             'eventTitle',
             'eventType',
-            'city',
-            'area',
-            'address',
-            'country',
+            // 'city',
+            // 'area',
+            // 'address',
+            // 'country',
             'timezone'
           ].includes(field.name))
       );
@@ -620,30 +633,22 @@ const EditEvent = ({ eventId: propEventId }) => {
                   </div>
                 </div>
               </div>
-              <AddressAutocomplete
-                className="mb-[10px]"
+              <Input
+                label="Address (optional)"
+                name="address"
                 value={formData.address.value}
-                onChange={address => handleInputChange('address', address)}
-                onAreaChange={area => handleInputChange('area', area)}
-                onCityChange={city => handleInputChange('city', city)}
-                onCountryChange={country => {
-                  handleInputChange('country', country);
-
-                  if (country) {
-                    const timezone = countryTimezones[country] || 'UTC';
-                    handleInputChange('timezone', timezone);
-                  }
-                }}
-                placeholder="Address*"
+                onChange={e => handleInputChange('address', e.target.value)}
                 error={formData.address.error}
+                className='pb-[10px] mb-[10px]'
               />
+
               <Select
                 wrapperClassName="mb-[10px]"
                 options={countryOptions.map(country => ({
                   label: country.country,
                   value: country.country
                 }))}
-                placeholder="Country*"
+                placeholder="Country"
                 name="country"
                 onChange={e => {
                   handleInputChange('country', e.target.value);
@@ -656,7 +661,7 @@ const EditEvent = ({ eventId: propEventId }) => {
               {formData.country.value && (
                 <Select
                   options={filteredCities}
-                  placeholder="City*"
+                  placeholder="City"
                   name="city"
                   onChange={e => handleInputChange('city', e.target.value)}
                   isSearchable
@@ -675,7 +680,7 @@ const EditEvent = ({ eventId: propEventId }) => {
                 error={formData.isHidden.error}
               />
               <Input
-                label="Area*"
+                label="Area"
                 type="text"
                 name="area"
                 value={formData.area.value}
