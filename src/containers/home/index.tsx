@@ -21,8 +21,12 @@ const Home = () => {
     const initializeEvents = async () => {
       const { data: fetchedEvents } = await fetchEvents();
       if (fetchedEvents) {
-        setEventState(fetchedEvents);
-        setFilteredEvents(fetchedEvents);
+        const sorted = [...fetchedEvents].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setEventState(sorted);
+        setFilteredEvents(sorted);
       }
     };
     initializeEvents();
