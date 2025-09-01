@@ -8,28 +8,42 @@ import TabbedContent from '@/components/TabbedContent';
 import { TAB_ALL, TAB_MY_EVENTS, TAB_SAVED_EVENTS } from '@/utils/constants';
 import { useCreatedEvents, useEvents, useSavedEvents } from '@/hooks/useEvents';
 import { useUser } from '@/context/UserContext';
+
+const byStartDateAsc = (list: any[] = []) =>
+  [...(list || [])].sort((a, b) => {
+    const aTime = new Date(
+      a?.start_date ?? a?.startDate ?? a?.createdAt
+    ).getTime();
+    const bTime = new Date(
+      b?.start_date ?? b?.startDate ?? b?.createdAt
+    ).getTime();
+    return aTime - bTime;
+  });
+
 const Home = () => {
   const { data: events, isLoading, refetch: fetchEvents } = useEvents(true);
   const { user } = useUser();
   const { refetch: fetchSavedEvents } = useSavedEvents(false);
   const { refetch: fetchCreatedEvents } = useCreatedEvents(false);
-  const [eventState, setEventState] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [eventState, setEventState] = useState<any[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [tabId, setTabId] = useState(TAB_ALL);
   const navigate = useNavigate();
   useEffect(() => {
     const initializeEvents = async () => {
       const { data: fetchedEvents } = await fetchEvents();
       if (fetchedEvents) {
-        setEventState(fetchedEvents);
-        setFilteredEvents(fetchedEvents);
+        const sorted = byStartDateAsc(fetchedEvents);
+        setEventState(sorted);
+        setFilteredEvents(sorted);
       }
     };
     initializeEvents();
   }, []);
-  const updateEvents = useCallback(newEvents => {
-    setEventState(newEvents);
-    setFilteredEvents(newEvents);
+  const updateEvents = useCallback((newEvents?: any[]) => {
+    const sorted = byStartDateAsc(newEvents || []);
+    setEventState(sorted);
+    setFilteredEvents(sorted);
   }, []);
   useEffect(() => {
     const hydrateEvents = async () => {
@@ -58,11 +72,11 @@ const Home = () => {
 
     hydrateEvents();
   }, [events, tabId, updateEvents]);
-  const handleFilteredEvents = useCallback(events => {
-    setFilteredEvents(events);
+  const handleFilteredEvents = useCallback((evts: any[]) => {
+    setFilteredEvents(byStartDateAsc(evts));
   }, []);
   const handleTabChange = useCallback(
-    async newTabId => {
+    async (newTabId: string) => {
       setTabId(newTabId);
       try {
         let fetchedData;

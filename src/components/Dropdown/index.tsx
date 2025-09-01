@@ -2,119 +2,80 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import ConditionalLink from "@/components/ConditionalLink";
-
 import menuIcon from "./link.png";
-
 import "./index.scss";
 
+type MenuItem = {
+  key: string;
+  label: string;
+  path: string;
+};
+
 const Dropdown: React.FC = () => {
-    const [selectedOption] = useState<string | null>(null);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(Boolean);
-    const { pathname } = useLocation();
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const { pathname } = useLocation();
 
-    useEffect(() => {
-        if (selectedOption !== null) {
-            setIsDropdownOpen(false);
-        }
-    }, [selectedOption]);
+  useEffect(() => {
+  }, []);
 
-    function handleDropdownClick() {
-        setIsDropdownOpen(!isDropdownOpen); 
-    }
+  const handleDropdownClick = () => setIsDropdownOpen((v) => !v);
 
-    return (
-        <div
-            id="dropdown"
-            className={`dropdown ${isDropdownOpen ? "open" : ""}`}
-            onClick={handleDropdownClick}>
-            <div className="selected-option">
-                {selectedOption || ""}
+  const isActive = (path: string) =>
+    pathname === path || pathname.startsWith(`${path}/`);
+
+  const items: MenuItem[] = [
+    { key: "benefits",   label: "BENEFITS",   path: "/benefits" },
+    { key: "privileges", label: "PRIVILEGES", path: "/privileges" },
+    { key: "ambassadors",label: "AMBASSADORS",path: "/ambassadors" },
+    { key: "sponsors",   label: "SPONSORS",   path: "/sponsorship" },
+    { key: "corporate",  label: "CORPORATE",  path: "/membership/page" },
+    { key: "contact",    label: "CONTACT US", path: "/contact" },
+    { key: "about-us",   label: "ABOUT US",   path: "/about-us" },
+  ];
+
+  return (
+    <div
+      id="dropdown"
+      className={`dropdown ${isDropdownOpen ? "open" : ""}`}
+      onClick={handleDropdownClick}
+    >
+      <div className="selected-option" />
+
+      <div
+        className={`options-container ${isDropdownOpen ? "open" : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="options">
+          <div className="spacer" />
+
+          <ConditionalLink
+            active={isActive("/communities")}
+            to="/communities"
+            onClick={() => setIsDropdownOpen(false)}
+          >
+            <div className="option">
+              HOME
+              <img src={menuIcon} className="menuIcon" alt="menu icon" />
             </div>
-            {
-                <div
-                    className={`options-container ${
-                        isDropdownOpen ? "open" : ""
-                    }`}>
-                    <div className="options">
-                        <div className="spacer" />
+          </ConditionalLink>
 
-                        <ConditionalLink
-                            active={pathname === "/"}
-                            to="/communities">
-                            <div key="a001" className="option">
-                                {"HOME"}
-                                <img src={menuIcon} className="menuIcon" />
-                            </div>
-                        </ConditionalLink>
-                        <a
-                            href="https://www.kimanilife.com/member-benefits-platform"
-                            key="a3">
-                            <div className="option">
-                                {"BENEFITS"}
-                                <img src={menuIcon} className="menuIcon" />
-                            </div>
-                        </a>
-                        <a
-                            href="https://www.kimanilife.com/privileges"
-                            key="a4">
-                            <div className="option">
-                                {"PRIVILEGES"}
-                                <img src={menuIcon} className="menuIcon" />
-                            </div>
-                        </a>
-                        <a
-                            href="https://www.kimanilife.com/ambassadors"
-                            key="a9">
-                            <div id="disabled" className="option">
-                                {"AMBASSADORS"}
-                                <img src={menuIcon} className="menuIcon" />
-                            </div>
-                        </a>
-                        <a
-                            href="https://www.kimanilife.com/sponsorship"
-                            key="a10">
-                            <div id="disabled" className="option">
-                                {"SPONSORS"}
-                                <img src={menuIcon} className="menuIcon" />
-                            </div>
-                        </a>
-                        <a
-                            href="https://www.kimanilife.com/membership/corporate"
-                            key="a11">
-                            <div id="disabled" className="option">
-                                {"CORPORATE"}
-                                <img src={menuIcon} className="menuIcon" />
-                            </div>
-                        </a>
-                        <a href="https://www.kimanilife.com/hiring" key="a12">
-                            <div id="disabled" className="option">
-                                {"JOIN OUR TEAM"}
-                                <img src={menuIcon} className="menuIcon" />
-                            </div>
-                        </a>
-                        <div className="menuWrap">
-                            <a
-                                href="https://www.kimanilife.com/contact"
-                                key="a13">
-                                <div className="option">
-                                    <p>{"CONTACT US"}</p>
-                                    <img src={menuIcon} className="menuIcon" />
-                                </div>
-                            </a>
-                            <a
-                                href="https://www.kimanilife.com/about-us"
-                                key="a14">
-                                <div className="option">
-                                    <p>{"ABOUT US"}</p>
-                                    <img src={menuIcon} className="menuIcon" />
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            }
+          {items.map((item) => (
+            <ConditionalLink
+              key={item.key}
+              active={isActive(item.path)}
+              to={item.path}
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              <div className="option">
+                {item.label}
+                <img src={menuIcon} className="menuIcon" alt="menu icon" />
+              </div>
+            </ConditionalLink>
+          ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Dropdown;

@@ -57,7 +57,7 @@ const Header = () => {
           {
             title: 'Concierge',
             onClick: () =>
-              window.open('https://www.kimanilife.com/concierge', '_self')
+              window.open(`${BASE_URL}/concierge/request`, '_self')
           },
           {
             title: 'Corporate',
