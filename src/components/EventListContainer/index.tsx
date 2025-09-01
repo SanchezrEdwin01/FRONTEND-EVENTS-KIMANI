@@ -38,20 +38,17 @@ const EventListContainer = ({
     );
   }
 
-  const renderEventCard = (event: Event, index: number) => (
-    <React.Fragment key={index}>
-      <Card card={event} />
-      {index < eventState.length - 1 && (
-        <hr className="w-full my-4 bg-[#191919] opacity-30" />
-      )}
-    </React.Fragment>
-  );
-
   const listing = React.useMemo(() => {
-    if (!eventState || !eventState?.length) {
-      return null;
-    }
-    return eventState.map(renderEventCard);
+    if (!eventState || !eventState?.length) return null;
+
+    return eventState.map((event, index) => (
+      <React.Fragment key={(event as any)._id ?? index}>
+        <Card card={event} />
+        {index < eventState.length - 1 && (
+          <hr className="w-full my-4 bg-[#191919] opacity-30" />
+        )}
+      </React.Fragment>
+    ));
   }, [eventState]);
   return (
     <div
