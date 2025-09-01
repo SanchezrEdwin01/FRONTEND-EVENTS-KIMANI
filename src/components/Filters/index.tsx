@@ -5,30 +5,41 @@ import {
   MagnifyingGlassIcon,
   AdjustmentsHorizontalIcon
 } from '@heroicons/react/24/outline';
-import { TYPES } from '@/utils/constants';
+import { TYPES, EVENT_TYPE_ALL } from '@/utils/constants';
 import { useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useDebouncedCallback } from 'use-debounce';
-import { EVENT_TYPE_ALL } from '@/utils/constants';
-const Filters = ({ eventState = [], onFilter, onReset }) => {
-  const [selectedTag, setSelectedTag] = useState({
-    name: 'All',
-    value: EVENT_TYPE_ALL
-  });
-  const [searchValue, setSearchValue] = useState(null);
-  const debouncedSearchValue = useDebouncedCallback(event => {
-    setSearchValue(event?.target?.value || '');
-  }, 1000);
+
+interface FiltersProps {
+  eventState: any[];
+  onFilter: (items: any[]) => void;
+  onReset: () => void;
+}
+
+const Filters = ({ eventState = [], onFilter, onReset }: FiltersProps) => {
+  // Alineamos el valor inicial con TYPES[0]
+  const [selectedTag, setSelectedTag] = useState(TYPES[0]); // { name: 'All events', value: EVENT_TYPE_ALL }
+  const [searchValue, setSearchValue] = useState<string | null>(null);
+
+  const debouncedSearchValue = useDebouncedCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchValue(event?.target?.value || '');
+    },
+    500
+  );
+
   const handleSearchBarFiltering = useCallback(
-    (searchValue: string) => {
-      const searchTerms = searchValue
-        .toLowerCase()
-        .split(' ')
-        .filter(term => term);
+    (text: string) => {
+      const searchTerms = text.toLowerCase().split(' ').filter(Boolean);
 
       const filteredEvents = eventState.filter(event => {
-        const hostNames =
-          event.hosts?.map(host => host.username).join(' ') || '';
+        const hostNames = Array.isArray(event?.host_details)
+          ? event.host_details
+              .map((h: any) => h?.username)
+              .filter(Boolean)
+              .join(' ')
+          : '';
+
         const eventText = [
           event.title,
           hostNames,
@@ -53,21 +64,26 @@ const Filters = ({ eventState = [], onFilter, onReset }) => {
 
       onFilter(filteredEvents);
     },
-    [eventState]
+    [eventState, onFilter]
   );
+
   const handleSelectedTag = useCallback(
     (tag: { name: string; value: string }) => {
       setSelectedTag(tag);
+
       if (tag.value === EVENT_TYPE_ALL) {
         onReset();
         return;
       }
+      const norm = (s: string) => (s || '').replace(/\s+/g, '').toLowerCase();
+
       const filteredEvents = eventState.filter(event =>
-        event.event_type?.toLowerCase().includes(tag.value.toLowerCase())
+        norm(event?.event_type || '').includes(norm(tag.value))
       );
+
       onFilter(filteredEvents);
     },
-    [eventState]
+    [eventState, onReset, onFilter]
   );
   useEffect(() => {
     if (searchValue) {
@@ -75,7 +91,7 @@ const Filters = ({ eventState = [], onFilter, onReset }) => {
     } else if (searchValue === '') {
       onReset();
     }
-  }, [searchValue]);
+  }, [searchValue, handleSearchBarFiltering, onReset]);
   return (
     <div className="filters">
       <div className="search_bar">
@@ -95,16 +111,14 @@ const Filters = ({ eventState = [], onFilter, onReset }) => {
           <AdjustmentsHorizontalIcon width={25} />
         </button>
       </div>
+
       <div className="tags">
-        {TYPES.map((type: { name: string; value: string }, v: number) => (
+        {TYPES.map((type, i) => (
           <div
-            key={v}
-            className={classNames([
-              'tag',
-              {
-                selected_tag: selectedTag?.value === type?.value
-              }
-            ])}
+            key={type.value ?? i}
+            className={classNames('tag', {
+              selected_tag: selectedTag?.value === type?.value
+            })}
             onClick={() => handleSelectedTag(type)}
           >
             <span>{type.name}</span>
@@ -116,7 +130,9 @@ const Filters = ({ eventState = [], onFilter, onReset }) => {
 };
 
 Filters.propTypes = {
-  eventState: PropTypes.arrayOf(PropTypes.shape({}))
+  eventState: PropTypes.arrayOf(PropTypes.shape({})),
+  onFilter: PropTypes.func,
+  onReset: PropTypes.func
 };
 
 export default Filters;

@@ -33,7 +33,6 @@ const byStartDatePriority = (list: any[] = []) => {
     return aPast ? tb - ta : ta - tb;
   });
 };
-
 const Home = () => {
   const { data: events, isLoading, refetch: fetchEvents } = useEvents(true);
   const { user } = useUser();

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Card from '@/components/Card';
-import { SkeletonCard } from '@/components/Card';
+import Card, { SkeletonCard } from '@/components/Card';
 import { Event } from '@/types/event';
 import { useUser } from '@/context/UserContext';
 interface EventListContainerProps {
