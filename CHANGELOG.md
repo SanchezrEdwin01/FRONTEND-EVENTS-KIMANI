@@ -2,17 +2,9 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### 1.0.4-RC.6 (2025-08-31)
+### 1.0.5 (2025-07-16)
 
-### 1.0.4-RC.5 (2025-08-28)
-
-### 1.0.4-RC.4 (2025-07-16)
-
-### 1.0.4-RC.3 (2025-07-16)
-
-### 1.0.4-RC.2 (2025-07-16)
-
-### 1.0.4-RC.1 (2025-07-16)
+### 1.0.4 (2025-07-15)
 
 ### 1.0.4-RC.0 (2025-07-15)
 
