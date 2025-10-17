@@ -50,7 +50,7 @@ const Header = () => {
             title: 'Marketplace',
             onClick: () =>
               window.open(
-                `${useMarketPlaceUrl()}/marketplace/portal?origin=${window.location.origin}&token=${useToken()}`,
+                `${useMarketPlaceUrl()}/marketplace/portal?origin=${BASE_URL}&token=${useToken()}`,
                 '_self'
               )
           },
