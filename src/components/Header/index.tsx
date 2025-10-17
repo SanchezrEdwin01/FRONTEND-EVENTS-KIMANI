@@ -46,6 +46,7 @@ const Header = () => {
             title: 'Events',
             onClick: () => window.open(`${BASE_URL}/events`, '_self')
           },
+          // Marketplace requires token for SSO
           {
             title: 'Marketplace',
             onClick: () =>
