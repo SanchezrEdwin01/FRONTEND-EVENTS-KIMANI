@@ -1,13 +1,18 @@
-// src/containers/home/index.tsx
+// pages/Home.tsx
 import { wrapErrorBoundary } from '@/hooks';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import EventListContainer from '@/components/EventListContainer';
 import Filters from '@/components/Filters';
 import { useNavigate } from 'react-router-dom';
 import TabbedContent from '@/components/TabbedContent';
 import { TAB_ALL, TAB_MY_EVENTS, TAB_SAVED_EVENTS } from '@/utils/constants';
-import { useCreatedEvents, useEvents, useSavedEvents } from '@/hooks/useEvents';
+import {
+  useCreatedEvents,
+  useEvents,
+  useSavedEvents,
+  useDeleteEvent,
+} from '@/hooks/useEvents';
 import { useUser } from '@/context/UserContext';
 import ContextMenu, { ContextMenuItem } from '@/components/ContextMenu';
 
@@ -22,12 +27,16 @@ const byStartDatePriority = (list: any[] = []) => {
   return [...(list || [])].sort((a, b) => {
     const ta = getStartTime(a);
     const tb = getStartTime(b);
+
     const aMissing = !Number.isFinite(ta);
     const bMissing = !Number.isFinite(tb);
-    if (aMissing || bMissing) return aMissing && bMissing ? 0 : aMissing ? 1 : -1;
+    if (aMissing || bMissing)
+      return aMissing && bMissing ? 0 : aMissing ? 1 : -1;
+
     const aPast = ta < now;
     const bPast = tb < now;
     if (aPast !== bPast) return aPast ? 1 : -1;
+
     return aPast ? tb - ta : ta - tb;
   });
 };
@@ -37,11 +46,13 @@ const Home = () => {
   const { user } = useUser();
   const { refetch: fetchSavedEvents } = useSavedEvents(false);
   const { refetch: fetchCreatedEvents } = useCreatedEvents(false);
-
-  const [eventState, setEventState] = useState<any[] | null>(null);
-  const [filteredEvents, setFilteredEvents] = useState<any[] | null>(null);
+  const [eventState, setEventState] = useState<any[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [tabId, setTabId] = useState(TAB_ALL);
   const navigate = useNavigate();
+
+  // --- Borrado de eventos
+  const { mutateAsync: deleteEvent, isPending: isDeleting } = useDeleteEvent();
 
   // --- Context menu state
   const [ctxMenu, setCtxMenu] = useState<{
@@ -54,59 +65,148 @@ const Home = () => {
   const openCtx = useCallback((x: number, y: number, eventData: any) => {
     setCtxMenu({ open: true, x, y, event: eventData });
   }, []);
+
   const closeCtx = useCallback(() => {
     setCtxMenu((s) => ({ ...s, open: false }));
   }, []);
 
-  // ✅ Poblar desde react-query cuando cambie `events`
-  useEffect(() => {
-    if (!events) return; // no limpies mientras carga: evita "No events found"
-    const sorted = byStartDatePriority(events);
-    setEventState(sorted);
-    setFilteredEvents(sorted);
-  }, [events]);
+  // Handlers del menú contextual
+  const onEditEvent = useCallback(() => {
+    if (!ctxMenu.event?._id) return;
+    closeCtx();
+    // Navega a tu editor (ajusta la ruta si tu app usa otra)
+    navigate(`/events/${ctxMenu.event._id}/edit`);
+  }, [ctxMenu.event, navigate, closeCtx]);
+
+  const onDeleteEvent = useCallback(async () => {
+    const evt = ctxMenu.event;
+    if (!evt?._id) return;
+    closeCtx();
+
+    const ok = window.confirm(`Delete the event "${evt.title || 'Untitled'}"?`);
+    if (!ok) return;
+
+    try {
+      
+      setFilteredEvents((prev) => prev.filter((e) => e._id !== evt._id));
+      setEventState((prev) => prev.filter((e) => e._id !== evt._id));
+
+      
+      await deleteEvent(evt._id);
+
+      
+      if (tabId === TAB_SAVED_EVENTS) {
+        const res = await fetchSavedEvents();
+        if (res?.data) {
+          const sorted = byStartDatePriority(res.data);
+          setEventState(sorted);
+          setFilteredEvents(sorted);
+        }
+      } else if (tabId === TAB_MY_EVENTS) {
+        const res = await fetchCreatedEvents();
+        if (res?.data) {
+          const sorted = byStartDatePriority(res.data);
+          setEventState(sorted);
+          setFilteredEvents(sorted);
+        }
+      } else {
+        
+        const res = await fetchEvents();
+        if (res?.data) {
+          const sorted = byStartDatePriority(res.data);
+          setEventState(sorted);
+          setFilteredEvents(sorted);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to delete event:', err);
+    
+      const res =
+        tabId === TAB_SAVED_EVENTS
+          ? await fetchSavedEvents()
+          : tabId === TAB_MY_EVENTS
+          ? await fetchCreatedEvents()
+          : await fetchEvents();
+      if (res?.data) {
+        const sorted = byStartDatePriority(res.data);
+        setEventState(sorted);
+        setFilteredEvents(sorted);
+      }
+      alert('Could not delete the event. Please try again.');
+    }
+  }, [
+    ctxMenu.event,
+    closeCtx,
+    deleteEvent,
+    tabId,
+    fetchSavedEvents,
+    fetchCreatedEvents,
+    fetchEvents,
+  ]);
 
   // Items del menú contextual
-  const onEditEvent = useCallback(() => {
-    const id = ctxMenu.event?._id || ctxMenu.event?.id;
-    if (!id) return; // ✅ evita navegar a /edit/undefined
-    navigate(`/edit/${id}`);
-  }, [ctxMenu.event, navigate]);
+  const menuItems: ContextMenuItem[] = [
+    { label: 'Edit event', onClick: onEditEvent },
+    { label: isDeleting ? 'Deleting…' : 'Delete event', onClick: onDeleteEvent, danger: true },
+  ];
 
-  const onDeleteEvent = useCallback(() => {
-    const id = ctxMenu.event?._id || ctxMenu.event?.id;
-    if (!id) return;
-    if (confirm('Are you sure you want to delete this event?')) {
-      console.log('Delete event:', id);
-      // TODO: conectar delete API + refetch
-    }
-  }, [ctxMenu.event]);
+  // --- Carga / tabs
+  useEffect(() => {
+    const initializeEvents = async () => {
+      const { data: fetchedEvents } = await fetchEvents();
+      if (fetchedEvents) {
+        const sorted = byStartDatePriority(fetchedEvents);
+        setEventState(sorted);
+        setFilteredEvents(sorted);
+      }
+    };
+    initializeEvents();
+  }, []);
 
-  const menuItems: ContextMenuItem[] = useMemo(
-    () => [
-      { label: 'Edit event', onClick: onEditEvent },
-      { label: 'Delete event', onClick: onDeleteEvent, danger: true },
-    ],
-    [onEditEvent, onDeleteEvent]
-  );
+  const updateEvents = useCallback((newEvents?: any[]) => {
+    const sorted = byStartDatePriority(newEvents || []);
+    setEventState(sorted);
+    setFilteredEvents(sorted);
+  }, []);
+
+  useEffect(() => {
+    const hydrateEvents = async () => {
+      try {
+        let fetchedData;
+
+        switch (tabId) {
+          case TAB_SAVED_EVENTS:
+            fetchedData = await fetchSavedEvents();
+            break;
+          case TAB_MY_EVENTS:
+            fetchedData = await fetchCreatedEvents();
+            break;
+          default:
+            updateEvents(events);
+            return;
+        }
+
+        if (fetchedData?.data) {
+          updateEvents(fetchedData.data);
+        }
+      } catch (error) {
+        console.error('Failed to hydrate events:', error);
+      }
+    };
+
+    hydrateEvents();
+  }, [events, tabId, updateEvents]);
 
   const handleFilteredEvents = useCallback((evts: any[]) => {
     setFilteredEvents(byStartDatePriority(evts));
   }, []);
 
-  const updateEvents = useCallback((newEvents?: any[]) => {
-    if (!newEvents) return;
-    const sorted = byStartDatePriority(newEvents);
-    setEventState(sorted);
-    setFilteredEvents(sorted);
-  }, []);
-
-  // Cambio de pestañas: mantener lista previa mientras llegan nuevos datos
   const handleTabChange = useCallback(
     async (newTabId: string) => {
       setTabId(newTabId);
       try {
         let fetchedData;
+
         switch (newTabId) {
           case TAB_SAVED_EVENTS:
             fetchedData = await fetchSavedEvents();
@@ -114,22 +214,22 @@ const Home = () => {
           case TAB_MY_EVENTS:
             fetchedData = await fetchCreatedEvents();
             break;
-          default: {
-            // Lista general
-            const { data } = await fetchEvents();
-            if (data) updateEvents(data);
+          default:
+            updateEvents(events);
             return;
-          }
         }
-        if (fetchedData?.data) updateEvents(fetchedData.data);
+
+        if (fetchedData?.data) {
+          updateEvents(fetchedData.data);
+        }
       } catch (error) {
         console.error('Failed to update events:', error);
       }
     },
-    [fetchCreatedEvents, fetchSavedEvents, fetchEvents, updateEvents]
+    [events, updateEvents]
   );
 
-  // Click derecho sobre cada Card
+  // Handler que pasamos a la lista para capturar click derecho
   const handleEventContextMenu = useCallback(
     (e: React.MouseEvent, evtData: any) => {
       e.preventDefault();
@@ -143,14 +243,14 @@ const Home = () => {
     <Layout hideHeader={false} hideFooter={false}>
       <section>
         <Filters
-          eventState={eventState || []}
+          eventState={eventState}
           onFilter={handleFilteredEvents}
-          onReset={() => filteredEvents && setFilteredEvents(eventState || [])}
+          onReset={() => setFilteredEvents(eventState)}
         />
         <TabbedContent onTabChange={handleTabChange} />
         <EventListContainer
-          eventState={filteredEvents || []}
-          isLoading={isLoading && !eventState} // muestra skeleton la primera vez
+          eventState={filteredEvents}
+          isLoading={isLoading}
           onEventContextMenu={handleEventContextMenu}
         />
         {user && (
@@ -158,7 +258,13 @@ const Home = () => {
             onClick={() => navigate('/new-event')}
             className="fixed text-black bottom-20 right-4 w-14 h-14 bg-white rounded-full shadow-lg flex items-center justify-center z-50 cursor-pointer"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+            >
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
@@ -170,6 +276,7 @@ const Home = () => {
         )}
       </section>
 
+      {/* Menú contextual global */}
       <ContextMenu
         open={ctxMenu.open}
         x={ctxMenu.x}
