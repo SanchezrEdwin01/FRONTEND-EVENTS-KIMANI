@@ -1,4 +1,3 @@
-// pages/Home.tsx
 import { wrapErrorBoundary } from '@/hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
@@ -51,7 +50,6 @@ const Home = () => {
   const [tabId, setTabId] = useState(TAB_ALL);
   const navigate = useNavigate();
 
-  // --- Borrado de eventos
   const { mutateAsync: deleteEvent, isPending: isDeleting } = useDeleteEvent();
 
   // --- Context menu state
@@ -70,13 +68,18 @@ const Home = () => {
     setCtxMenu((s) => ({ ...s, open: false }));
   }, []);
 
+  
+  const goToEventEditor = useCallback(
+    (id: string) => navigate(`/event-editor/${id}`),
+    [navigate]
+  );
+
   // Handlers del menú contextual
   const onEditEvent = useCallback(() => {
     if (!ctxMenu.event?._id) return;
     closeCtx();
-    // Navega a tu editor (ajusta la ruta si tu app usa otra)
-    navigate(`/events/${ctxMenu.event._id}/edit`);
-  }, [ctxMenu.event, navigate, closeCtx]);
+    goToEventEditor(ctxMenu.event._id);
+  }, [ctxMenu.event, goToEventEditor, closeCtx]);
 
   const onDeleteEvent = useCallback(async () => {
     const evt = ctxMenu.event;
@@ -87,14 +90,12 @@ const Home = () => {
     if (!ok) return;
 
     try {
-      
+      // 1) Optimista
       setFilteredEvents((prev) => prev.filter((e) => e._id !== evt._id));
       setEventState((prev) => prev.filter((e) => e._id !== evt._id));
-
-      
+      // 2) API
       await deleteEvent(evt._id);
-
-      
+      // 3) Refetch según pestaña
       if (tabId === TAB_SAVED_EVENTS) {
         const res = await fetchSavedEvents();
         if (res?.data) {
@@ -110,7 +111,6 @@ const Home = () => {
           setFilteredEvents(sorted);
         }
       } else {
-        
         const res = await fetchEvents();
         if (res?.data) {
           const sorted = byStartDatePriority(res.data);
@@ -120,7 +120,6 @@ const Home = () => {
       }
     } catch (err) {
       console.error('Failed to delete event:', err);
-    
       const res =
         tabId === TAB_SAVED_EVENTS
           ? await fetchSavedEvents()
@@ -144,7 +143,6 @@ const Home = () => {
     fetchEvents,
   ]);
 
-  // Items del menú contextual
   const menuItems: ContextMenuItem[] = [
     { label: 'Edit event', onClick: onEditEvent },
     { label: isDeleting ? 'Deleting…' : 'Delete event', onClick: onDeleteEvent, danger: true },
@@ -161,6 +159,7 @@ const Home = () => {
       }
     };
     initializeEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateEvents = useCallback((newEvents?: any[]) => {
@@ -173,7 +172,6 @@ const Home = () => {
     const hydrateEvents = async () => {
       try {
         let fetchedData;
-
         switch (tabId) {
           case TAB_SAVED_EVENTS:
             fetchedData = await fetchSavedEvents();
@@ -185,7 +183,6 @@ const Home = () => {
             updateEvents(events);
             return;
         }
-
         if (fetchedData?.data) {
           updateEvents(fetchedData.data);
         }
@@ -193,9 +190,8 @@ const Home = () => {
         console.error('Failed to hydrate events:', error);
       }
     };
-
     hydrateEvents();
-  }, [events, tabId, updateEvents]);
+  }, [events, tabId, updateEvents, fetchCreatedEvents, fetchSavedEvents]);
 
   const handleFilteredEvents = useCallback((evts: any[]) => {
     setFilteredEvents(byStartDatePriority(evts));
@@ -206,7 +202,6 @@ const Home = () => {
       setTabId(newTabId);
       try {
         let fetchedData;
-
         switch (newTabId) {
           case TAB_SAVED_EVENTS:
             fetchedData = await fetchSavedEvents();
@@ -218,7 +213,6 @@ const Home = () => {
             updateEvents(events);
             return;
         }
-
         if (fetchedData?.data) {
           updateEvents(fetchedData.data);
         }
@@ -226,10 +220,9 @@ const Home = () => {
         console.error('Failed to update events:', error);
       }
     },
-    [events, updateEvents]
+    [events, updateEvents, fetchCreatedEvents, fetchSavedEvents]
   );
 
-  // Handler que pasamos a la lista para capturar click derecho
   const handleEventContextMenu = useCallback(
     (e: React.MouseEvent, evtData: any) => {
       e.preventDefault();
@@ -257,14 +250,9 @@ const Home = () => {
           <button
             onClick={() => navigate('/new-event')}
             className="fixed text-black bottom-20 right-4 w-14 h-14 bg-white rounded-full shadow-lg flex items-center justify-center z-50 cursor-pointer"
+            type="button"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
@@ -277,13 +265,7 @@ const Home = () => {
       </section>
 
       {/* Menú contextual global */}
-      <ContextMenu
-        open={ctxMenu.open}
-        x={ctxMenu.x}
-        y={ctxMenu.y}
-        items={menuItems}
-        onClose={closeCtx}
-      />
+      <ContextMenu open={ctxMenu.open} x={ctxMenu.x} y={ctxMenu.y} items={menuItems} onClose={closeCtx} />
     </Layout>
   );
 };

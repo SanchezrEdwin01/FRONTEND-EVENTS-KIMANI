@@ -11,37 +11,20 @@ import ScrollToTop from '@/components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Loader from '@/components/Loader';
 
-// For now
+// Pages (lazy)
 const NewEventPage = withSuspense(lazy(() => import('@/containers/new-event')));
 const HomePage = withSuspense(lazy(() => import('@/containers/home')));
 const EventsPage = withSuspense(lazy(() => import('@/containers/events')));
-const ViewEventPage = withSuspense(
-  lazy(() => import('@/containers/view-event'))
-);
-const RegisterGuestsPage = withSuspense(
-  lazy(() => import('./containers/register-guests'))
-);
-const EditEventPage = withSuspense(
-  React.lazy(() => import('@/containers/edit-event'))
-);
-const PendingRequests = withSuspense(
-  React.lazy(() => import('@/containers/pending-requests'))
-);
-const BlastAMessage = withSuspense(
-  React.lazy(() => import('@/containers/blast-a-message'))
-);
-const InviteGuests = withSuspense(
-  React.lazy(() => import('@/containers/invite-guests'))
-);
-const ApprovedGuests = withSuspense(
-  React.lazy(() => import('@/containers/approved-guests'))
-);
-const ManageHosts = withSuspense(
-  React.lazy(() => import('@/containers/manage-hosts'))
-);
-const ManagePayments = withSuspense(
-  React.lazy(() => import('@/containers/manage-payments'))
-);
+const ViewEventPage = withSuspense(lazy(() => import('@/containers/view-event')));
+const RegisterGuestsPage = withSuspense(lazy(() => import('./containers/register-guests')));
+const EditEventPage = withSuspense(lazy(() => import('@/containers/edit-event')));
+const PendingRequests = withSuspense(lazy(() => import('@/containers/pending-requests')));
+const BlastAMessage = withSuspense(lazy(() => import('@/containers/blast-a-message')));
+const InviteGuests = withSuspense(lazy(() => import('@/containers/invite-guests')));
+const ApprovedGuests = withSuspense(lazy(() => import('@/containers/approved-guests')));
+const ManageHosts = withSuspense(lazy(() => import('@/containers/manage-hosts')));
+const ManagePayments = withSuspense(lazy(() => import('@/containers/manage-payments')));
+const EventEditorPage = withSuspense(lazy(() => import('@/containers/event-editor')));
 
 function AppRoutes() {
   const { isLoading } = useUser();
@@ -54,10 +37,15 @@ function AppRoutes() {
     <Context>
       <ScrollToTop />
       <Routes>
+        {/* Public */}
         <Route path="/" element={<HomePage />} />
         <Route path="/events" element={<EventsPage />} />
+        <Route path="/view/:eventId" element={<ViewEventPage />} />
+        <Route path="/register-guests/:eventId" element={<RegisterGuestsPage />} />
+        {/* 🔓 Hacemos *pública* la ruta del editor por ahora */}
+        <Route path="/event-editor/:eventId" element={<EventEditorPage />} />
 
-        {/* Protected Routes */}
+        {/* Protected */}
         <Route
           path="/new-event"
           element={
@@ -66,7 +54,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/edit/:eventId"
           element={
@@ -75,7 +62,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/manage-hosts/:eventId"
           element={
@@ -84,14 +70,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
-        <Route path="/view/:eventId" element={<ViewEventPage />} />
-
-        <Route
-          path="/register-guests/:eventId"
-          element={<RegisterGuestsPage />}
-        />
-
         <Route
           path="/pending-requests/:eventId"
           element={
@@ -100,7 +78,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/blast-a-message/:eventId"
           element={
@@ -109,7 +86,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/invite-guests/:eventId"
           element={
@@ -118,7 +94,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/approved-guests/:eventId"
           element={
@@ -127,7 +102,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/manage-payments/:eventId"
           element={
@@ -137,9 +111,11 @@ function AppRoutes() {
           }
         />
 
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {import.meta.env.DEV && <ReactQueryDevtools />}
+
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </Context>
   );
 }

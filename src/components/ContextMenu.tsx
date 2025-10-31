@@ -79,6 +79,7 @@ export default function ContextMenu({ open, x, y, items, onClose }: Props) {
         {items.map((it, i) => (
           <button
             key={i}
+            type="button"  // 🔧 evita submit & recarga
             role="menuitem"
             onClick={() => {
               it.onClick();
