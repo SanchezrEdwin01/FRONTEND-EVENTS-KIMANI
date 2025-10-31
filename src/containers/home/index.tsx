@@ -41,10 +41,12 @@ const byStartDatePriority = (list: any[] = []) => {
 };
 
 const Home = () => {
+  // Nota: useEvents(true) hidrata el listado inicial.
   const { data: events, isLoading, refetch: fetchEvents } = useEvents(true);
   const { user } = useUser();
   const { refetch: fetchSavedEvents } = useSavedEvents(false);
   const { refetch: fetchCreatedEvents } = useCreatedEvents(false);
+
   const [eventState, setEventState] = useState<any[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [tabId, setTabId] = useState(TAB_ALL);
@@ -68,7 +70,6 @@ const Home = () => {
     setCtxMenu((s) => ({ ...s, open: false }));
   }, []);
 
-  
   const goToEventEditor = useCallback(
     (id: string) => navigate(`/event-editor/${id}`),
     [navigate]
@@ -241,6 +242,8 @@ const Home = () => {
           onReset={() => setFilteredEvents(eventState)}
         />
         <TabbedContent onTabChange={handleTabChange} />
+        {/* Nota: la uniformidad de tamaño y nitidez de imágenes ya se logra
+            con el Card (fit cover + dpr=2) y con el upload 1080×1080 */}
         <EventListContainer
           eventState={filteredEvents}
           isLoading={isLoading}
@@ -251,6 +254,7 @@ const Home = () => {
             onClick={() => navigate('/new-event')}
             className="fixed text-black bottom-20 right-4 w-14 h-14 bg-white rounded-full shadow-lg flex items-center justify-center z-50 cursor-pointer"
             type="button"
+            aria-label="Create new event"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path

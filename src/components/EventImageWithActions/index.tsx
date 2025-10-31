@@ -7,6 +7,7 @@ import shareIcon from '@/assets/images/share.svg';
 import cn from 'classnames';
 import './styles.scss';
 import { useUser } from '@/context/UserContext';
+
 interface EventImageWithActionsProps {
   imageUrl?: string;
   onFavorite: () => void;
@@ -48,7 +49,6 @@ const EventImageWithActions: React.FC<EventImageWithActionsProps> = ({
         });
       } catch (error) {
         console.error('Error sharing event:', error);
-
         copyToClipboard();
       }
     } else {
@@ -58,8 +58,7 @@ const EventImageWithActions: React.FC<EventImageWithActionsProps> = ({
 
   const copyToClipboard = () => {
     if (!eventUrl) return;
-
-    navigator.clipboard.writeText(eventUrl).catch(err => {
+    navigator.clipboard.writeText(eventUrl).catch((err) => {
       console.error('Failed to copy link:', err);
     });
   };
@@ -70,9 +69,12 @@ const EventImageWithActions: React.FC<EventImageWithActionsProps> = ({
         src={imageUrl || defaultEventImage}
         alt="Event"
         className="main-image w-full object-cover object-top sm-h-full min-h-[400px] h-[484px]"
-        onError={e => {
+        onError={(e) => {
           e.currentTarget.src = defaultEventImage;
         }}
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
       />
 
       {hasMultipleImages && (
