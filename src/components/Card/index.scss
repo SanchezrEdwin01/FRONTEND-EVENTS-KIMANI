@@ -1,28 +1,55 @@
-.event-card {
-  h2 {
-    font-family: var(--font-playfair-display);
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 23.99px;
-    letter-spacing: 0%;
+/* Contenedor cuadrado consistente, más grande */
+.media-square {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* cuadrado */
+  overflow: hidden;
+  background: #111;
 
-    span {
-      font-weight: bold;
-    }
+  /* Fallback para navegadores sin aspect-ratio */
+  &::before {
+    content: '';
+    display: block;
+    padding-top: 100%;
   }
 
-  p {
-    font-family: var(--font-hanken-grotesk);
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 18.24px;
-    letter-spacing: 0%;
-  }
-
-  img{
+  .media-square__inner {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    border-radius: 10px;
-    object-fit: cover;
-    height: auto;
+    height: 100%;
   }
+
+  .media-square__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .media-square__placeholder {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,.35);
+  }
+}
+
+/* “Un poco más grande” en móviles y aún más en pantallas mayores */
+.media-square--lg {
+  /* En móviles ya llena todo el ancho del card.
+     Solo reforzamos altura mínima visual para dar más presencia. */
+  min-height: 280px;
+}
+
+@media (min-width: 640px) {
+  .media-square--lg { min-height: 340px; }
+}
+@media (min-width: 768px) {
+  .media-square--lg { min-height: 380px; }
+}
+@media (min-width: 1024px) {
+  .media-square--lg { min-height: 420px; }
 }

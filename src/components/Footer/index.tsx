@@ -11,7 +11,8 @@ import { useBaseURL } from '@/hooks/useBaseURL';
 import UserIcon from '../UserIcon';
 
 const Footer = () => {
-  const { user } = useUser();
+    const { data } = useUser();
+    const { user } = data || {};
   const BASE_URL = useBaseURL();
 
   return (
