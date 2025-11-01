@@ -19,7 +19,8 @@ export default function SendInvite({
   const [personalMessages, setPersonalMessages] = React.useState<{
     [key: string]: string;
   }>({});
-  const { user } = useUser();
+    const { data } = useUser();
+    const { user } = data || {};
   const { mutate: sendInvite, isPending } = useBulkMessage();
   const [successfullySent, setSuccessfullySent] =
     React.useState<boolean>(false);

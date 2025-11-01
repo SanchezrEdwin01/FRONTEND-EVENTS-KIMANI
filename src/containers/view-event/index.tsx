@@ -232,7 +232,8 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
   const { data: event, isPending: loading, error } = useEvent(finalEventId);
   const saveEvent = useSaveEvent();
 
-  const { user } = useUser();
+    const { data } = useUser();
+    const { user } = data || {};
 
   const [showTickets, setShowTickets] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -456,37 +457,47 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
   const renderPeopleSection = () => {
     if (!event) return null;
     if (!event?.hosts?.length && !event?.sponsors?.length) return null;
+
     return (
       <StyledLayout.Section>
         <Separator />
         <div className="mb-2 self-stretch justify-start text-white text-xl font-medium font-['Playfair_Display']">
           {isHost ? 'Organizer' : 'People'}
         </div>
-        {/* Render managers */}
+
+        {/* Hosts / Managers */}
         {event?.hosts?.map((host, index) => {
           const _host = event?.host_details?.find(h => h.id === host);
           const memberAvatar =
             (_host?.avatar && generateFileURL(_host.avatar)) || null;
+          const displayName = _host?.username || _host?.name || '';
+
           return (
             <RoleBadge
               profilePicture={memberAvatar}
               key={`manager-${index}`}
-              text={EventUtils.getRoleText(isPaid, index === 0)}
-              userName={_host?.username}
+              // ✅ Incluir el nombre dentro del texto mostrado
+              text={`${EventUtils.getRoleText(isPaid, index === 0)}${displayName ? ` ${displayName}` : ''}`}
+              // Mantengo el prop por si el componente lo usa internamente
+              userName={displayName}
             />
           );
         })}
-        {/* Render sponsors */}
+
+        {/* Sponsors */}
         {event?.sponsors?.map((sponsor, index) => {
           const _sponsor = event?.sponsor_details?.find(s => s.id === sponsor);
           const sponsorAvatar =
             (_sponsor?.avatar && generateFileURL(_sponsor.avatar)) || null;
+          const displayName = _sponsor?.username || _sponsor?.name || '';
+
           return (
             <RoleBadge
               key={`sponsor-${index}`}
-              text={EventUtils.getSponsorRoleText(index === 0)}
-              userName={_sponsor?.username}
               profilePicture={sponsorAvatar}
+              // ✅ Incluir el nombre dentro del texto mostrado
+              text={`${EventUtils.getSponsorRoleText(index === 0)}${displayName ? ` ${displayName}` : ''}`}
+              userName={displayName}
             />
           );
         })}

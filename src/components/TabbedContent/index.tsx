@@ -6,7 +6,8 @@ import { useUser } from '@/context/UserContext';
 
 const TabbedContent = ({ tabs = defaultTabs, onTabChange }) => {
   const [activeTab, setActiveTab] = useState('all');
-  const { user } = useUser();
+    const { data } = useUser();
+    const { user } = data || {};
   const currentTabs = user ? defaultTabsWithUser : tabs;
 
   const handleTabClick = useCallback(
