@@ -105,18 +105,51 @@ export const useUser = (serverId?: string | null | false) => {
       try {
         const { data: user } = await apiClient.get<User>('/users/@me');
 
-        // Si no queremos calcular admin
         if (!resolvedServerId) return { user, isAdmin: false };
 
-        const [{ data: server }, { data: member }] = await Promise.all([
-          apiClient.get<ServerDTO>(`/servers/${resolvedServerId}`),
-          apiClient.get<MemberDTO>(`/servers/${resolvedServerId}/members/@me`)
-        ]);
+        const { data: server } = await apiClient
+          .get<ServerDTO>(`/servers/${resolvedServerId}`)
+          .catch(err => {
+            if (err?.response?.status === 404) {
+              return { data: null as unknown as ServerDTO };
+            }
+            throw err;
+          });
+        if (!server) return { user, isAdmin: false };
+
+        const userId = (user as any)?._id ?? (user as any)?.id;
+        let member: MemberDTO | null = null;
+
+        try {
+          const { data } = await apiClient.get<MemberDTO>(
+            `/servers/${resolvedServerId}/members/${encodeURIComponent(userId)}`
+          );
+          member = data;
+        } catch (err: any) {
+          const code = err?.response?.status;
+          if (code === 404 || code === 405 || code === 400) {
+            const { data } = await apiClient
+              .get<MemberDTO>(`/servers/${resolvedServerId}/members/@me`, {
+                validateStatus: s => (s >= 200 && s < 300) || s === 404
+              })
+              .then(resp =>
+                resp.status === 404
+                  ? { data: null as unknown as MemberDTO }
+                  : resp
+              );
+            member = data;
+          } else {
+            throw err;
+          }
+        }
+
+        if (!member) return { user, isAdmin: false };
 
         const isAdmin = isAdminFrom(server, member);
 
         if (isAdmin) {
-          const uid = (user as any)?._id ?? (user as any)?.id ?? 'unknown';
+          const uid = userId ?? 'unknown';
+          // eslint-disable-next-line no-console
           console.info('[UserContext] Admin detected', {
             userId: uid,
             serverId: resolvedServerId,
