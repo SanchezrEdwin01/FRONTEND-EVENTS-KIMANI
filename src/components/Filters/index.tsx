@@ -17,8 +17,7 @@ interface FiltersProps {
 }
 
 const Filters = ({ eventState = [], onFilter, onReset }: FiltersProps) => {
-  // Alineamos el valor inicial con TYPES[0]
-  const [selectedTag, setSelectedTag] = useState(TYPES[0]); // { name: 'All events', value: EVENT_TYPE_ALL }
+  const [selectedTag, setSelectedTag] = useState(TYPES[0]);
   const [searchValue, setSearchValue] = useState<string | null>(null);
 
   const debouncedSearchValue = useDebouncedCallback(
