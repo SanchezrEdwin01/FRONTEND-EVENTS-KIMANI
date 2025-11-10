@@ -4,13 +4,14 @@ import Layout from '@/components/Layout';
 import EventListContainer from '@/components/EventListContainer';
 import Filters from '@/components/Filters';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import TabbedContent from '@/components/TabbedContent';
 import { TAB_ALL, TAB_MY_EVENTS, TAB_SAVED_EVENTS } from '@/utils/constants';
 import {
   useCreatedEvents,
   useEvents,
   useSavedEvents,
-  useDeleteEvent,
+  useDeleteEvent
 } from '@/hooks/useEvents';
 import { useUser } from '@/context/UserContext';
 import ContextMenu, { ContextMenuItem } from '@/components/ContextMenu';
@@ -43,8 +44,8 @@ const byStartDatePriority = (list: any[] = []) => {
 const Home = () => {
   // Nota: useEvents(true) hidrata el listado inicial.
   const { data: events, isLoading, refetch: fetchEvents } = useEvents(true);
-    const { data } = useUser();
-    const { user } = data || {};
+  const { data } = useUser();
+  const { user } = data || {};
   const { refetch: fetchSavedEvents } = useSavedEvents(false);
   const { refetch: fetchCreatedEvents } = useCreatedEvents(false);
 
@@ -68,7 +69,7 @@ const Home = () => {
   }, []);
 
   const closeCtx = useCallback(() => {
-    setCtxMenu((s) => ({ ...s, open: false }));
+    setCtxMenu(s => ({ ...s, open: false }));
   }, []);
 
   const goToEventEditor = useCallback(
@@ -93,8 +94,8 @@ const Home = () => {
 
     try {
       // 1) Optimista
-      setFilteredEvents((prev) => prev.filter((e) => e._id !== evt._id));
-      setEventState((prev) => prev.filter((e) => e._id !== evt._id));
+      setFilteredEvents(prev => prev.filter(e => e._id !== evt._id));
+      setEventState(prev => prev.filter(e => e._id !== evt._id));
       // 2) API
       await deleteEvent(evt._id);
       // 3) Refetch según pestaña
@@ -126,8 +127,8 @@ const Home = () => {
         tabId === TAB_SAVED_EVENTS
           ? await fetchSavedEvents()
           : tabId === TAB_MY_EVENTS
-          ? await fetchCreatedEvents()
-          : await fetchEvents();
+            ? await fetchCreatedEvents()
+            : await fetchEvents();
       if (res?.data) {
         const sorted = byStartDatePriority(res.data);
         setEventState(sorted);
@@ -142,12 +143,16 @@ const Home = () => {
     tabId,
     fetchSavedEvents,
     fetchCreatedEvents,
-    fetchEvents,
+    fetchEvents
   ]);
 
   const menuItems: ContextMenuItem[] = [
     { label: 'Edit event', onClick: onEditEvent },
-    { label: isDeleting ? 'Deleting…' : 'Delete event', onClick: onDeleteEvent, danger: true },
+    {
+      label: isDeleting ? 'Deleting…' : 'Delete event',
+      onClick: onDeleteEvent,
+      danger: true
+    }
   ];
 
   // --- Carga / tabs
@@ -251,13 +256,20 @@ const Home = () => {
           onEventContextMenu={handleEventContextMenu}
         />
         {user && (
-          <button
+          <Link
+            to="/new-event"
             onClick={() => navigate('/new-event')}
             className="fixed text-black bottom-20 right-4 w-14 h-14 bg-white rounded-full shadow-lg flex items-center justify-center z-50 cursor-pointer"
             type="button"
             aria-label="Create new event"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+            >
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
@@ -265,12 +277,18 @@ const Home = () => {
                 fill="black"
               />
             </svg>
-          </button>
+          </Link>
         )}
       </section>
 
       {/* Menú contextual global */}
-      <ContextMenu open={ctxMenu.open} x={ctxMenu.x} y={ctxMenu.y} items={menuItems} onClose={closeCtx} />
+      <ContextMenu
+        open={ctxMenu.open}
+        x={ctxMenu.x}
+        y={ctxMenu.y}
+        items={menuItems}
+        onClose={closeCtx}
+      />
     </Layout>
   );
 };
