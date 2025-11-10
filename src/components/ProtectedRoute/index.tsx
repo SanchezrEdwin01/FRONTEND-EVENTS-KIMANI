@@ -14,7 +14,8 @@ const ProtectedRoute = ({
   requireAuth = true,
   requireHost = false
 }: ProtectedRouteProps) => {
-  const { user, isLoading } = useUser();
+  const { data, isLoading } = useUser();
+  const { user } = data || {};
   const location = useLocation();
 
   if (isLoading) {
