@@ -248,8 +248,7 @@ const Home = () => {
           onReset={() => setFilteredEvents(eventState)}
         />
         <TabbedContent onTabChange={handleTabChange} />
-        {/* Nota: la uniformidad de tamaño y nitidez de imágenes ya se logra
-            con el Card (fit cover + dpr=2) y con el upload 1080×1080 */}
+        {}
         <EventListContainer
           eventState={filteredEvents}
           isLoading={isLoading}

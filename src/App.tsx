@@ -2,7 +2,7 @@ import React, { lazy } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Context from '@/context';
 import { withSuspense } from '@/hooks/index';
-import { UserProvider, useUser } from './context/UserContext';
+import { UserProvider } from './context/UserContext';
 import { QueryProvider } from './providers/query-provider';
 import './styles/index.css';
 import './styles/index.scss';
@@ -27,12 +27,6 @@ const ManagePayments = withSuspense(lazy(() => import('@/containers/manage-payme
 const EventEditorPage = withSuspense(lazy(() => import('@/containers/event-editor')));
 
 function AppRoutes() {
-  const { isLoading } = useUser();
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <Context>
       <ScrollToTop />
@@ -42,7 +36,7 @@ function AppRoutes() {
         <Route path="/events" element={<EventsPage />} />
         <Route path="/view/:eventId" element={<ViewEventPage />} />
         <Route path="/register-guests/:eventId" element={<RegisterGuestsPage />} />
-        {/* 🔓 Hacemos *pública* la ruta del editor por ahora */}
+        {/* 🔓 pública temporalmente */}
         <Route path="/event-editor/:eventId" element={<EventEditorPage />} />
 
         {/* Protected */}

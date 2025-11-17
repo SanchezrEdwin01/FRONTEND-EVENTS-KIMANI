@@ -61,10 +61,23 @@ type FieldState<T = any> = {
 const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
   const { eventId: urlEventId } = useParams<{ eventId: string }>();
   const finalEventId = propEventId || urlEventId || '';
+
+  const navigate = useNavigate();
+
+  // Guard temprano por si no hay eventId
+  if (!finalEventId) {
+    return (
+      <ErrorScreen
+        title="Invalid event"
+        message="Event ID is missing."
+        showHomeButton
+      />
+    );
+  }
+
   const { data: event, isPending: loading, error } = useEvent(finalEventId);
   const { mutate: updateEvent, isPending } = useEditEvent();
   const uploadAttachmentMutation = useUploadAttachment();
-  const navigate = useNavigate();
 
   const alwaysInclude = ['country', 'city', 'area', 'address'];
 
@@ -100,8 +113,8 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
         ...prev,
         thumbnail: { ...prev.thumbnail, value: event?.thumbnail || null },
         gallery: { ...prev.gallery, value: event?.gallery || [] },
-        eventTitle: { ...prev.eventTitle, value: event.title || '' , valid: !!event.title },
-        eventType: { ...prev.eventType, value: event.event_type || '' , valid: !!event.event_type },
+        eventTitle: { ...prev.eventTitle, value: event.title || '', valid: !!event.title },
+        eventType: { ...prev.eventType, value: event.event_type || '', valid: !!event.event_type },
         city: { ...prev.city, value: event.city || '' },
         isHidden: { ...prev.isHidden, value: !!event.hide_address },
         area: { ...prev.area, value: event.area || '' },
@@ -123,7 +136,7 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
 
   const handleInputChange = useCallback((
     key: string,
-    value: string | number | File | null | undefined | File[] | Date
+    value: string | number | File | null | undefined | File[] | Date | boolean
   ) => {
     let validationResult = { isValid: true, error: '' };
 
@@ -135,66 +148,41 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
           maxLength(value, 50, 'Event title'),
         ]);
         break;
-
       case 'description':
         validationResult = validateAll([
           isAlphanumeric(value, 'Description'),
           minLength(value, 1, 'Description'),
         ]);
         break;
-
       case 'eventType':
         validationResult = validateAll([required(value, 'Event type')]);
         break;
-
       case 'startDate':
       case 'endDate':
         validationResult = validateAll([required(value, key === 'startDate' ? 'Start date' : 'End date')]);
         break;
-
       case 'timezone':
         validationResult = validateAll([required(value, 'Timezone')]);
         break;
-
-      // opcionales: no bloquean el guardado
-      case 'isHidden':
-      case 'allowPlusOne':
-      case 'requirePlusOneInfo':
-      case 'requireRsvpApproval':
-      case 'showEventToNonMembers':
-      case 'thumbnail':
-      case 'gallery':
-      case 'attachedFile':
-      case 'plusOneCount':
-      case 'city':
-      case 'area':
-      case 'address':
-      case 'country':
-        validationResult = { isValid: true, error: '' };
-        break;
-
+      // opcionales
       default:
         validationResult = { isValid: true, error: '' };
     }
 
     setHasFormChanges(true);
-
-    setFormData((prev) => {
-      return {
-        ...prev,
-        [key]: {
-          ...prev[key],
-          value,
-          valid: validationResult.isValid,
-          error: validationResult.error,
-          changed: true,
-        },
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        value,
+        valid: validationResult.isValid,
+        error: validationResult.error,
+        changed: true,
+      },
+    }));
   }, []);
 
   const hasValidationErrors = useCallback((data: Record<string, FieldState>) => {
-    // Campos estrictamente requeridos
     const requiredKeys = ['eventTitle', 'eventType', 'startDate', 'endDate', 'timezone'];
     for (const k of requiredKeys) {
       const f = data[k];
@@ -214,15 +202,14 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
     const attachmentIds: string[] = [];
 
     if (formData.thumbnail.changed && formData.thumbnail.value) {
-      const thumbnailResponse = await uploadAttachmentMutation.mutateAsync(formData.thumbnail.value as File);
+      const file = formData.thumbnail.value as File;
+      const thumbnailResponse = await uploadAttachmentMutation.mutateAsync(file);
       if (thumbnailResponse?.id) thumbnailId = thumbnailResponse.id;
     }
 
     if (formData.gallery.changed && Array.isArray(formData.gallery.value) && formData.gallery.value.length > 0) {
       const galleryUploads = await Promise.all(
-        (formData.gallery.value as File[]).map((file) =>
-          uploadAttachmentMutation.mutateAsync(file)
-        )
+        (formData.gallery.value as File[]).map((file) => uploadAttachmentMutation.mutateAsync(file))
       );
       galleryUploads.forEach((response) => {
         if (response?.id) galleryIds.push(response.id);
@@ -230,7 +217,8 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
     }
 
     if (formData.attachedFile.changed && formData.attachedFile.value) {
-      const attachmentResponse = await uploadAttachmentMutation.mutateAsync(formData.attachedFile.value as File);
+      const file = formData.attachedFile.value as File;
+      const attachmentResponse = await uploadAttachmentMutation.mutateAsync(file);
       if (attachmentResponse?.id) attachmentIds.push(attachmentResponse.id);
     }
 
@@ -295,21 +283,20 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
       setHasFormChanges(false);
       setSaveStatus(true);
       setTimeout(() => setSaveStatus(false), 3000);
-
-      // Si quieres volver a la vista del evento:
       // navigate(`/view/${finalEventId}`);
     } catch (err) {
       console.error('Failed to update event:', err);
     }
   }, [formData, finalEventId, uploadAttachmentMutation, updateEvent]);
 
+  // ✅ Memo estable para ciudades por país (se usa más abajo SIN hooks condicionales)
   const { filteredCities } = useMemo(() => {
-    if (!formData.country.value) return { filteredCities: [] };
+    if (!formData.country.value) return { filteredCities: [] as {label:string; value:string}[] };
 
     const selectedCountry = countryOptions.find(
       (c) => c.country === formData.country.value
     );
-    if (!selectedCountry) return { filteredCities: [] };
+    if (!selectedCountry) return { filteredCities: [] as {label:string; value:string}[] };
 
     const cities = selectedCountry.cities
       .map((city) => ({ label: city.city, value: city.city }))
@@ -338,6 +325,20 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
     );
   }
 
+  // helpers seguros para default images
+  const thumbnailDefault =
+    event?.thumbnail
+      ? (Array.isArray(event.thumbnail) ? getDisplayImage(event.thumbnail[0]) : getDisplayImage(event.thumbnail))
+      : undefined;
+
+  const galleryDefault =
+    Array.isArray(event?.gallery) && event.gallery.length > 0
+      ? event.gallery.map((img: string) => ({
+          preview: getDisplayImage(img),
+          name: img,
+        }))
+      : undefined;
+
   return (
     <Layout hideFooter hideHeader={false}>
       <section className="relative">
@@ -352,19 +353,8 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
                   name="thumbnail"
                   onImageSelect={(file) => handleInputChange('thumbnail', file)}
                   onGalleryChange={(files) => handleInputChange('gallery', files)}
-                  defaultValue={
-                    event?.thumbnail?.length > 0
-                      ? getDisplayImage(event.thumbnail)
-                      : undefined
-                  }
-                  defaultGallery={
-                    event?.gallery?.length > 0
-                      ? event?.gallery?.map((image: string) => ({
-                          preview: getDisplayImage(image),
-                          name: image,
-                        }))
-                      : undefined
-                  }
+                  defaultValue={thumbnailDefault}
+                  defaultGallery={galleryDefault}
                 />
               </div>
 
@@ -411,12 +401,10 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
                         onChange={(date) => {
                           const newDate = new Date(formData.startDate.value as Date);
                           newDate.setHours(date.getHours());
-
                           const currentMinutes = date.getMinutes();
                           const roundedMinutes = currentMinutes < 30 ? 0 : 30;
                           newDate.setMinutes(roundedMinutes);
                           newDate.setSeconds(0);
-
                           handleInputChange('startDate', newDate);
                         }}
                         isStartTime={true}
@@ -439,12 +427,10 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
                         onChange={(date) => {
                           const newDate = new Date(formData.endDate.value as Date);
                           newDate.setHours(date.getHours());
-
                           const currentMinutes = date.getMinutes();
                           const roundedMinutes = currentMinutes < 30 ? 0 : 30;
                           newDate.setMinutes(roundedMinutes);
                           newDate.setSeconds(0);
-
                           handleInputChange('endDate', newDate);
                         }}
                         startTime={formData.startDate.value as Date}
@@ -488,15 +474,10 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
                 error={formData.country.error}
               />
 
+              {/* ✅ SIN hooks condicionales */}
               {formData.country.value && (
                 <Select
-                  options={useMemo(() => {
-                    const selectedCountry = countryOptions.find((c) => c.country === formData.country.value);
-                    if (!selectedCountry) return [];
-                    return selectedCountry.cities
-                      .map((city) => ({ label: city.city, value: city.city }))
-                      .sort((a, b) => a.label.localeCompare(b.label));
-                  }, [formData.country.value])}
+                  options={filteredCities}
                   placeholder="City"
                   name="city"
                   onChange={(e) => handleInputChange('city', e.target.value)}
@@ -596,6 +577,7 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
                   <button
                     onClick={() => handleInputChange('attachedFile', null)}
                     className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    aria-label="Remove attachment"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
