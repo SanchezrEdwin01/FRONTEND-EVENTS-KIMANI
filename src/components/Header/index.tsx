@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TabbedNavigation from '@/components/TabbedNavigation';
 import { MenuOutline } from 'styled-icons/evaicons-outline';
 import Dropdown from '@/components/Dropdown';
@@ -7,11 +7,29 @@ import { useToken } from '@/hooks/useToken';
 import { useMarketPlaceUrl } from '@/hooks/useMarketPlaceUrl';
 import './index.scss';
 
-const Header = () => {
+export default function Header() {
   const BASE_URL = useBaseURL();
+  const [hidden, setHidden] = useState(false);
+  const [lastY, setLastY] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastY;
+
+      if (delta > 5 && currentY > 80) setHidden(true);
+
+      if (delta < -5) setHidden(false);
+
+      setLastY(currentY);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [lastY]);
 
   return (
-    <header className="header">
+    <header id="main-header" className="header">
       <div className="hero">
         <div
           className="logo"
@@ -57,8 +75,7 @@ const Header = () => {
           },
           {
             title: 'Concierge',
-            onClick: () =>
-              window.open(`${BASE_URL}/concierge/request`, '_self')
+            onClick: () => window.open(`${BASE_URL}/concierge/request`, '_self')
           },
           {
             title: 'Corporate',
@@ -73,5 +90,4 @@ const Header = () => {
       />
     </header>
   );
-};
-export default Header;
+}
