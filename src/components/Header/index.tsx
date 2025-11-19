@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import TabbedNavigation from '@/components/TabbedNavigation';
 import { MenuOutline } from 'styled-icons/evaicons-outline';
 import Dropdown from '@/components/Dropdown';
@@ -9,27 +9,9 @@ import './index.scss';
 
 export default function Header() {
   const BASE_URL = useBaseURL();
-  const [hidden, setHidden] = useState(false);
-  const [lastY, setLastY] = useState(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const currentY = window.scrollY;
-      const delta = currentY - lastY;
-
-      if (delta > 5 && currentY > 80) setHidden(true);
-
-      if (delta < -5) setHidden(false);
-
-      setLastY(currentY);
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [lastY]);
 
   return (
-    <header id="main-header" className="header">
+    <header id="main-header" className="header sticky-header">
       <div className="hero">
         <div
           className="logo"
@@ -50,6 +32,7 @@ export default function Header() {
           <Dropdown />
         </div>
       </div>
+
       <TabbedNavigation
         tabs={[
           {
@@ -64,7 +47,6 @@ export default function Header() {
             title: 'Events',
             onClick: () => window.open(`${BASE_URL}/events`, '_self')
           },
-          // Marketplace requires token for SSO
           {
             title: 'Marketplace',
             onClick: () =>
