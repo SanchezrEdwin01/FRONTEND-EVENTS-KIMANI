@@ -15,6 +15,7 @@ import {
 } from '@/hooks/useEvents';
 import { useUser } from '@/context/UserContext';
 import ContextMenu, { ContextMenuItem } from '@/components/ContextMenu';
+import { StickySecondaryHeader } from './wrapper/StickySecondaryHeader';
 
 const getStartTime = (e: any) => {
   const s = e?.start_date ?? e?.startDate;
@@ -242,12 +243,14 @@ const Home = () => {
   return (
     <Layout hideHeader={false} hideFooter={false}>
       <section>
-        <Filters
-          eventState={eventState}
-          onFilter={handleFilteredEvents}
-          onReset={() => setFilteredEvents(eventState)}
-        />
-        <TabbedContent onTabChange={handleTabChange} />
+        <StickySecondaryHeader>
+          <Filters
+            eventState={eventState}
+            onFilter={handleFilteredEvents}
+            onReset={() => setFilteredEvents(eventState)}
+          />
+          <TabbedContent onTabChange={handleTabChange} />
+        </StickySecondaryHeader>
         {/* Nota: la uniformidad de tamaño y nitidez de imágenes ya se logra
             con el Card (fit cover + dpr=2) y con el upload 1080×1080 */}
         <EventListContainer
