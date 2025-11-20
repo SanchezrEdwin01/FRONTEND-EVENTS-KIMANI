@@ -10,6 +10,8 @@ import './index.scss';
 export default function Header() {
   const BASE_URL = useBaseURL();
 
+  // Header
+
   return (
     <header id="main-header" className="header sticky-header">
       <div className="hero">

@@ -1,44 +1,44 @@
 .header {
-    background-color: #020202;
-    margin: 6px 4px;
-    border-radius: 16px;
-    padding: 9px 20px 0px;
-    z-index: 20;
-    position: relative;
-    .hero {
-        height: calc(56px * 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0px;
-        font-weight: 600;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        gap: 0px;
-    }
+  background-color: #020202;
+  margin: 0px 4px;
+  border-radius: 16px;
+  padding: calc(env(safe-area-inset-top) + 6px) 20px 0px;  
+  z-index: 20;
+  position: relative;
+  .hero {
+    height: calc(56px * 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    gap: 0px;
+  }
 }
 
 .menu {
-    position: relative;
-    z-index: 10000;
+  position: relative;
+  z-index: 10000;
 
-    .items {
-        color: white;
-        display: flex;
-        align-items: center;
-    }
+  .items {
+    color: white;
+    display: flex;
+    align-items: center;
+  }
 }
 
 .logo {
-    picture {
-        display: block;
-        width: 96px;
-        max-height: 24px;
-    }
+  picture {
+    display: block;
+    width: 96px;
+    max-height: 24px;
+  }
 }
 
 .sticky-header {
-    position: sticky;
-    top: 0;
-    z-index: 5000;
+  top: calc(env(safe-area-inset-top) * -1);
+  position: sticky;
+  z-index: 5000;
 }
