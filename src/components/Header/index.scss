@@ -3,8 +3,10 @@
     margin: 6px 4px;
     border-radius: 16px;
     padding: 9px 20px 0px;
-    z-index: 20;
-    position: relative;
+    z-index: 100;
+    position: sticky;
+    top: 0;
+    
     .hero {
         height: calc(56px * 0.7);
         display: flex;

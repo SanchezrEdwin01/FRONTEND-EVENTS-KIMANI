@@ -351,8 +351,8 @@ const EditEvent = ({ eventId: propEventId }: { eventId?: string }) => {
                 </BackButton>
                 <ImageUpload
                   name="thumbnail"
-                  onImageSelect={(file) => handleInputChange('thumbnail', file)}
-                  onGalleryChange={(files) => handleInputChange('gallery', files)}
+                  onImageSelect={file => handleInputChange('thumbnail', file)}
+                  onGalleryChange={files => handleInputChange('gallery', files)}
                   defaultValue={thumbnailDefault}
                   defaultGallery={galleryDefault}
                 />

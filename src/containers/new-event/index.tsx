@@ -39,7 +39,6 @@ import backIcon from '@/assets/images/back.svg';
 import TimePicker from '@/components/TimePicker';
 import CustomDatePicker from '@/components/DatePicker';
 import TimezonePicker from '../../components/TimezonePicker';
-// import AddressAutocomplete from '../../components/AddressAutocomplete';
 import CustomDropdown from '../../components/CustomDropdown';
 import { CreateEventPayload } from '@/types';
 import { countryTimezones } from '../../utils/timezones';
@@ -175,10 +174,6 @@ const NewEvent = () => {
     const requiredFieldsStep1 = [
       'eventTitle',
       'eventType',
-      // 'country',
-      // 'city',
-      // 'area',
-      // 'address',
       'startDate',
       'endDate',
       'timezone'
@@ -209,11 +204,13 @@ const NewEvent = () => {
     setAllFieldsValidStep1(isAllValidStep1);
     setAllFieldsValidStep2(isAllValidStep2);
   }, [formData]);
+
   const [step, setStep] = useState(1);
 
   const handleInputChange = useCallback(
-    (key: string, value: string | number | File | null | undefined) => {
+    (key: string, value: string | number | File | null | undefined | File[]) => {
       let validationResult: ValidationResult = { isValid: true };
+      
       if (typeof value === 'string') {
         switch (key) {
           case 'eventTitle':
@@ -223,12 +220,6 @@ const NewEvent = () => {
               maxLength(value, 50, 'Event title')
             ]);
             break;
-
-          // case 'address':
-          // case 'area':
-          // case 'city':
-          // case 'country':
-          //   break;
 
           case 'description':
             if (value) {
@@ -256,6 +247,18 @@ const NewEvent = () => {
               valid: validationResult?.isValid || false,
               step: prev.country.step,
               error: validationResult?.error || ''
+            }
+          };
+        }
+
+        if (key === 'galleryImages') {
+          return {
+            ...prev,
+            galleryImages: {
+              value: value as File[],
+              valid: true,
+              step: prev.galleryImages.step,
+              error: ''
             }
           };
         }
@@ -359,11 +362,11 @@ const NewEvent = () => {
           ...(formData.plan.value === 'paid' && {
             member_price: formData.memberPrice.value,
             member_max_tickets: Number.parseInt(
-              formData.memberMaxTickets.value
+              formData.memberMaxTickets.value.toString()
             ),
             non_member_price: formData.nonMemberPrice.value,
             non_member_max_tickets: Number.parseInt(
-              formData.nonMemberMaxTickets.value
+              formData.nonMemberMaxTickets.value.toString()
             ),
             processing_fee_percentage: String(formData.processingFee.value),
             member_price_currency: formData.memberCurrency.value,
@@ -486,9 +489,7 @@ const NewEvent = () => {
                 <ImageUpload
                   name="eventImage"
                   onImageSelect={file => handleInputChange('eventImage', file)}
-                  onGalleryChange={files =>
-                    handleInputChange('galleryImages', files)
-                  }
+                  onGalleryChange={files => handleInputChange('galleryImages', files)}
                   defaultValue={
                     formData.eventImage.value
                       ? URL.createObjectURL(formData.eventImage.value)
@@ -496,11 +497,12 @@ const NewEvent = () => {
                   }
                   defaultGallery={
                     formData?.galleryImages?.value &&
-                    formData.galleryImages.value?.length > 0 &&
-                    formData.galleryImages.value?.map(image => ({
-                      preview: URL.createObjectURL(image),
-                      name: image.name
-                    }))
+                    formData.galleryImages.value?.length > 0
+                      ? formData.galleryImages.value?.map(image => ({
+                          preview: URL.createObjectURL(image),
+                          name: image.name
+                        }))
+                      : undefined
                   }
                 />
               </div>
@@ -1086,4 +1088,5 @@ const NewEvent = () => {
     </Layout>
   );
 };
+
 export default wrapErrorBoundary(NewEvent);
