@@ -1,3 +1,4 @@
+// src/components/Card.tsx
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
@@ -5,13 +6,28 @@ import { BookmarkIcon } from '@heroicons/react/24/outline';
 import './index.scss';
 import ShareButton from '../ShareButton';
 import { formatDate, getDisplayImage } from '@/utils/utils';
-import ImageWithFallback from '../ImageWithFallback';
 import { useSaveEvent } from '@/hooks/useEvents';
 import cn from 'classnames';
 import { useUser } from '@/context/UserContext';
 import { PLATFORM_URL } from '@/utils/constants';
+import ProgressiveImage from '../ProgressiveImage';
 
-const Card = ({ card }) => {
+interface CardProps {
+  card: {
+    _id: string;
+    title: string;
+    thumbnail?: string;
+    gallery?: string[];
+    start_date: string;
+    end_date?: string;
+    hosts: string[];
+    city: string;
+    is_saved?: boolean;
+    host_details?: Array<{ id: string; username: string }>;
+  };
+}
+
+const Card: React.FC<CardProps> = ({ card }) => {
   const {
     _id,
     title,
@@ -24,25 +40,37 @@ const Card = ({ card }) => {
     is_saved
   } = card;
 
-    const { data } = useUser();
-    const { user } = data || {};
+  const { data } = useUser();
+  const { user } = data || {};
   const navigate = useNavigate();
   const saveEvent = useSaveEvent();
 
-  const formatHostedBy = useCallback((hosts) => {
+  const formatHostedBy = useCallback((hosts: string[]) => {
     if (!Array.isArray(hosts)) return null;
-    const names = hosts
-      .map((host) => {
-        const _host = card?.host_details?.find((h) => h.id === host);
-        return _host?.username;
-      })
-      .filter(Boolean);
-    return names.length ? `Hosted by: ${names.join(', ')}` : null;
-  }, []);
+    
+    // Si hosts es un array de strings (nombres), úsalos directamente
+    if (hosts.length > 0 && typeof hosts[0] === 'string') {
+      return `Hosted by: ${hosts.join(', ')}`;
+    }
+    
+    // Si hosts es un array de IDs, usa host_details para mapear
+    if (card?.host_details) {
+      const names = hosts
+        .map((hostId) => {
+          const host = card.host_details?.find((h) => h.id === hostId);
+          return host?.username;
+        })
+        .filter(Boolean);
+      return names.length ? `Hosted by: ${names.join(', ')}` : null;
+    }
+    
+    return null;
+  }, [card?.host_details]);
 
   const handleBookmarkClick = useCallback(
-    (e) => {
+    (e: React.MouseEvent) => {
       e.stopPropagation();
+      e.preventDefault();
       saveEvent.mutate(_id);
     },
     [saveEvent, _id]
@@ -55,33 +83,39 @@ const Card = ({ card }) => {
       ? getDisplayImage(gallery[0], { width: 1440, height: 1440, dpr: 2, fit: 'cover' })
       : '';
 
+  const handleCardClick = () => {
+    navigate(`/view/${_id}`);
+  };
+
   return (
-    <div className="event-card w-full max-w-md rounded-lg overflow-hidden relative">
-      <div className="cursor-pointer" onClick={() => navigate(`/view/${_id}`)}>
-        {/* Contenedor cuadrado más grande */}
+    <div className="event-card">
+      <div className="cursor-pointer" onClick={handleCardClick}>
+        {/* Contenedor cuadrado con ancho fijo */}
         <div className="media-square media-square--lg">
-          <ImageWithFallback
-            src={imgSrc}
-            alt={title}
-            wrapperClassName="media-square__inner"
-            className="media-square__img"
-            decoding="async"
-          />
+          <div className="media-square__inner">
+            <ProgressiveImage
+              src={imgSrc}
+              alt={title}
+              className="media-square__img"
+              decoding="async"
+              loading="lazy"
+            />
+          </div>
         </div>
       </div>
 
       <div
         className="p-3 cursor-pointer"
-        onClick={() => navigate(`/view/${_id}`)}
+        onClick={handleCardClick}
       >
-        <h2 className="mb-1 text-lg leading-snug">
+        <h2 className="mb-1 text-lg leading-snug text-white">
           <Link to={`/view/${_id}`} className="hover:underline cursor-pointer">
             {title}
           </Link>{' '}
           <span className="text-base text-white/80">| {city}</span>
         </h2>
-        <p className="mb-1 text-sm">{formatDate(start_date, false, end_date)}</p>
-        {formatHostedBy(hosts) && <p className="text-sm">{formatHostedBy(hosts)}</p>}
+        <p className="mb-1 text-sm text-gray-300">{formatDate(start_date, false, end_date)}</p>
+        {formatHostedBy(hosts) && <p className="text-sm text-gray-300">{formatHostedBy(hosts)}</p>}
       </div>
 
       <div className="absolute top-2 right-2 flex gap-2 z-10">
@@ -106,16 +140,16 @@ const Card = ({ card }) => {
   );
 };
 
-export const SkeletonCard = () => {
+export const SkeletonCard: React.FC = () => {
   return (
-    <div className="event-card w-full max-w-md rounded-lg overflow-hidden relative animate-pulse">
+    <div className="event-card animate-pulse">
       <div className="media-square media-square--lg">
-        <div className="media-square__placeholder" />
+        <div className="media-square__placeholder bg-gray-700 w-full h-full" />
       </div>
       <div className="p-3">
-        <div className="mb-1"><div className="h-5 bg-white/60 rounded w-3/4" /></div>
-        <div className="mb-1"><div className="h-4 bg-white/60 rounded w-1/4" /></div>
-        <div><div className="h-4 bg-white/60 rounded w-1/2" /></div>
+        <div className="mb-1"><div className="h-5 bg-gray-600 rounded w-3/4" /></div>
+        <div className="mb-1"><div className="h-4 bg-gray-600 rounded w-1/4" /></div>
+        <div><div className="h-4 bg-gray-600 rounded w-1/2" /></div>
       </div>
     </div>
   );
@@ -123,11 +157,19 @@ export const SkeletonCard = () => {
 
 Card.propTypes = {
   card: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
+    thumbnail: PropTypes.string,
     gallery: PropTypes.arrayOf(PropTypes.string),
     start_date: PropTypes.string.isRequired,
-    hosts: PropTypes.arrayOf(PropTypes.string),
-    city: PropTypes.string.isRequired
+    end_date: PropTypes.string,
+    hosts: PropTypes.arrayOf(PropTypes.string).isRequired,
+    city: PropTypes.string.isRequired,
+    is_saved: PropTypes.bool,
+    host_details: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
+      username: PropTypes.string
+    }))
   }).isRequired
 };
 

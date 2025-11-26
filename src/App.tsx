@@ -15,16 +15,36 @@ import Loader from '@/components/Loader';
 const NewEventPage = withSuspense(lazy(() => import('@/containers/new-event')));
 const HomePage = withSuspense(lazy(() => import('@/containers/home')));
 const EventsPage = withSuspense(lazy(() => import('@/containers/events')));
-const ViewEventPage = withSuspense(lazy(() => import('@/containers/view-event')));
-const RegisterGuestsPage = withSuspense(lazy(() => import('./containers/register-guests')));
-const EditEventPage = withSuspense(lazy(() => import('@/containers/edit-event')));
-const PendingRequests = withSuspense(lazy(() => import('@/containers/pending-requests')));
-const BlastAMessage = withSuspense(lazy(() => import('@/containers/blast-a-message')));
-const InviteGuests = withSuspense(lazy(() => import('@/containers/invite-guests')));
-const ApprovedGuests = withSuspense(lazy(() => import('@/containers/approved-guests')));
-const ManageHosts = withSuspense(lazy(() => import('@/containers/manage-hosts')));
-const ManagePayments = withSuspense(lazy(() => import('@/containers/manage-payments')));
-const EventEditorPage = withSuspense(lazy(() => import('@/containers/event-editor')));
+const ViewEventPage = withSuspense(
+  lazy(() => import('@/containers/view-event'))
+);
+const RegisterGuestsPage = withSuspense(
+  lazy(() => import('./containers/register-guests'))
+);
+const EditEventPage = withSuspense(
+  lazy(() => import('@/containers/edit-event'))
+);
+const PendingRequests = withSuspense(
+  lazy(() => import('@/containers/pending-requests'))
+);
+const BlastAMessage = withSuspense(
+  lazy(() => import('@/containers/blast-a-message'))
+);
+const InviteGuests = withSuspense(
+  lazy(() => import('@/containers/invite-guests'))
+);
+const ApprovedGuests = withSuspense(
+  lazy(() => import('@/containers/approved-guests'))
+);
+const ManageHosts = withSuspense(
+  lazy(() => import('@/containers/manage-hosts'))
+);
+const ManagePayments = withSuspense(
+  lazy(() => import('@/containers/manage-payments'))
+);
+const EventEditorPage = withSuspense(
+  lazy(() => import('@/containers/event-editor'))
+);
 
 function AppRoutes() {
   const { isLoading } = useUser();
@@ -41,8 +61,10 @@ function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/view/:eventId" element={<ViewEventPage />} />
-        <Route path="/register-guests/:eventId" element={<RegisterGuestsPage />} />
-        {/* 🔓 Hacemos *pública* la ruta del editor por ahora */}
+        <Route
+          path="/register-guests/:eventId"
+          element={<RegisterGuestsPage />}
+        />
         <Route path="/event-editor/:eventId" element={<EventEditorPage />} />
 
         {/* Protected */}

@@ -7,13 +7,11 @@ import { useToken } from '@/hooks/useToken';
 import { useMarketPlaceUrl } from '@/hooks/useMarketPlaceUrl';
 import './index.scss';
 
-export default function Header() {
+const Header = () => {
   const BASE_URL = useBaseURL();
 
-  // Header
-
   return (
-    <header id="main-header" className="header sticky-header">
+    <header className="header">
       <div className="hero">
         <div
           className="logo"
@@ -34,7 +32,6 @@ export default function Header() {
           <Dropdown />
         </div>
       </div>
-
       <TabbedNavigation
         tabs={[
           {
@@ -49,6 +46,7 @@ export default function Header() {
             title: 'Events',
             onClick: () => window.open(`${BASE_URL}/events`, '_self')
           },
+          // Marketplace requires token for SSO
           {
             title: 'Marketplace',
             onClick: () =>
@@ -59,7 +57,8 @@ export default function Header() {
           },
           {
             title: 'Concierge',
-            onClick: () => window.open(`${BASE_URL}/concierge/request`, '_self')
+            onClick: () =>
+              window.open(`${BASE_URL}/concierge/request`, '_self')
           },
           {
             title: 'Corporate',
@@ -74,4 +73,5 @@ export default function Header() {
       />
     </header>
   );
-}
+};
+export default Header;
