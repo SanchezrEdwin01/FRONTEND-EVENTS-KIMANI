@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 import ErrorScreen from '@/components/ErrorScreen';
 import Loader from '@/components/Loader';
+
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAuth?: boolean;
@@ -18,11 +19,12 @@ const ProtectedRoute = ({
   const { user } = data || {};
   const location = useLocation();
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return <Loader />;
+
   if (requireAuth && !user) {
+    // Si no tienes ruta /login, redirige al home:
     return <Navigate to="/login" state={{ from: location }} replace />;
+    // o: return <Navigate to="/" replace />;
   }
 
   if (requireHost && !user?.is_host) {
