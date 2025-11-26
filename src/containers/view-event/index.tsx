@@ -100,6 +100,15 @@ const StyledLayout = {
   Section: styled.section`
     display: flex;
     flex-direction: column;
+  `,
+
+  ClickableRoleBadge: styled.div`
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
   `
 };
 
@@ -232,8 +241,8 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
   const { data: event, isPending: loading, error } = useEvent(finalEventId);
   const saveEvent = useSaveEvent();
 
-    const { data } = useUser();
-    const { user } = data || {};
+  const { data } = useUser();
+  const { user } = data || {};
 
   const [showTickets, setShowTickets] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -287,6 +296,10 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
       console.error('Error toggling favorite:', error);
     }
   }, [finalEventId, saveEvent]);
+
+  const handleNavigateToProfile = useCallback((userId: string) => {
+    navigate(`/profile/${userId}`);
+  }, [navigate]);
 
   const ticketPricing = useMemo<TicketPricingConfig>(() => {
     if (!event?.ticket_config) {
@@ -473,14 +486,16 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
           const displayName = _host?.username || _host?.name || '';
 
           return (
-            <RoleBadge
-              profilePicture={memberAvatar}
+            <StyledLayout.ClickableRoleBadge
               key={`manager-${index}`}
-              // ✅ Incluir el nombre dentro del texto mostrado
-              text={`${EventUtils.getRoleText(isPaid, index === 0)}${displayName ? ` ${displayName}` : ''}`}
-              // Mantengo el prop por si el componente lo usa internamente
-              userName={displayName}
-            />
+              onClick={() => _host?.id && handleNavigateToProfile(_host.id)}
+            >
+              <RoleBadge
+                profilePicture={memberAvatar}
+                text={`${EventUtils.getRoleText(isPaid, index === 0)}${displayName ? ` ${displayName}` : ''}`}
+                userName={displayName}
+              />
+            </StyledLayout.ClickableRoleBadge>
           );
         })}
 
@@ -492,13 +507,16 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
           const displayName = _sponsor?.username || _sponsor?.name || '';
 
           return (
-            <RoleBadge
+            <StyledLayout.ClickableRoleBadge
               key={`sponsor-${index}`}
-              profilePicture={sponsorAvatar}
-              // ✅ Incluir el nombre dentro del texto mostrado
-              text={`${EventUtils.getSponsorRoleText(index === 0)}${displayName ? ` ${displayName}` : ''}`}
-              userName={displayName}
-            />
+              onClick={() => _sponsor?.id && handleNavigateToProfile(_sponsor.id)}
+            >
+              <RoleBadge
+                profilePicture={sponsorAvatar}
+                text={`${EventUtils.getSponsorRoleText(index === 0)}${displayName ? ` ${displayName}` : ''}`}
+                userName={displayName}
+              />
+            </StyledLayout.ClickableRoleBadge>
           );
         })}
       </StyledLayout.Section>
@@ -586,8 +604,7 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
                     href={attachmentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="!text-blue-600 hover:underline self-stretch justify-start text-base font-normal
-          font-['Hanken_Grotesk']"
+                    className="!text-blue-600 hover:underline self-stretch justify-start text-base font-normal font-['Hanken_Grotesk']"
                   >
                     Attachment {index + 1}
                   </a>

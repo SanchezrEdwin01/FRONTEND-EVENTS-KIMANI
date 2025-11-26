@@ -18,6 +18,8 @@ interface EventImageWithActionsProps {
   onNextImage?: () => void;
   onPrevImage?: () => void;
   isSaved?: boolean;
+  nextImageUrl?: string;
+  prevImageUrl?: string;
 }
 
 const EventImageWithActions: React.FC<EventImageWithActionsProps> = ({
@@ -29,11 +31,62 @@ const EventImageWithActions: React.FC<EventImageWithActionsProps> = ({
   hasMultipleImages = false,
   onNextImage,
   onPrevImage,
-  isSaved
+  isSaved,
+  nextImageUrl,
+  prevImageUrl
 }) => {
   const navigate = useNavigate();
-    const { data } = useUser();
-    const { user } = data || {};
+  const { data } = useUser();
+  const { user } = data || {};
+  const [currentImage, setCurrentImage] = React.useState(imageUrl);
+  const [isLoading, setIsLoading] = React.useState(false);
+  
+  // Preload adjacent images
+  React.useEffect(() => {
+    const preloadImages = [];
+    if (nextImageUrl) preloadImages.push(nextImageUrl);
+    if (prevImageUrl) preloadImages.push(prevImageUrl);
+    
+    preloadImages.forEach(url => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, [nextImageUrl, prevImageUrl]);
+
+  // Update current image when imageUrl changes
+  React.useEffect(() => {
+    setCurrentImage(imageUrl);
+  }, [imageUrl]);
+
+  const handleNextImage = async () => {
+    if (!onNextImage || isLoading) return;
+    
+    setIsLoading(true);
+    try {
+      await onNextImage();
+      // Force immediate UI response
+      if (nextImageUrl) {
+        setCurrentImage(nextImageUrl);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePrevImage = async () => {
+    if (!onPrevImage || isLoading) return;
+    
+    setIsLoading(true);
+    try {
+      await onPrevImage();
+      // Force immediate UI response
+      if (prevImageUrl) {
+        setCurrentImage(prevImageUrl);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleShare = async () => {
     if (onShare) {
@@ -67,9 +120,12 @@ const EventImageWithActions: React.FC<EventImageWithActionsProps> = ({
   return (
     <div className="image-container overflow-hidden">
       <img
-        src={imageUrl || defaultEventImage}
+        src={currentImage || defaultEventImage}
         alt="Event"
-        className="main-image w-full object-cover object-top sm-h-full min-h-[400px] h-[484px]"
+        className={cn(
+          "main-image w-full object-cover object-top sm-h-full min-h-[400px] h-[484px]",
+          { "opacity-100": !isLoading, "opacity-70": isLoading }
+        )}
         onError={(e) => {
           e.currentTarget.src = defaultEventImage;
         }}
@@ -78,18 +134,26 @@ const EventImageWithActions: React.FC<EventImageWithActionsProps> = ({
         fetchpriority="high"
       />
 
+      {isLoading && (
+        <div className="image-loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
+
       {hasMultipleImages && (
         <div className="image-navigation">
           <button
-            className="nav-button prev-button"
-            onClick={onPrevImage}
+            className={cn("nav-button prev-button", { "opacity-50 cursor-not-allowed": isLoading })}
+            onClick={handlePrevImage}
+            disabled={isLoading}
             aria-label="Previous image"
           >
             &#10094;
           </button>
           <button
-            className="nav-button next-button"
-            onClick={onNextImage}
+            className={cn("nav-button next-button", { "opacity-50 cursor-not-allowed": isLoading })}
+            onClick={handleNextImage}
+            disabled={isLoading}
             aria-label="Next image"
           >
             &#10095;
