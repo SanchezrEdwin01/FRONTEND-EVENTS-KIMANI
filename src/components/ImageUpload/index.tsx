@@ -26,7 +26,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   defaultValue,
   defaultGallery
 }) => {
-  const [preview, setPreview] = useState<string>(defaultValue || defaultEventImage);
+  const [preview, setPreview] = useState<string>(
+    defaultValue || defaultEventImage
+  );
   const [gallery, setGallery] = useState<ImageItem[]>(defaultGallery || []);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -56,8 +58,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     galleryInputRef.current?.click();
   };
 
-  const validateImageDimensions = (file: File): Promise<{ valid: boolean; width?: number; height?: number; error?: string }> => {
-    return new Promise((resolve) => {
+  const validateImageDimensions = (
+    file: File
+  ): Promise<{
+    valid: boolean;
+    width?: number;
+    height?: number;
+    error?: string;
+  }> => {
+    return new Promise(resolve => {
       // Validate file type first
       const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       if (!validTypes.includes(file.type)) {
@@ -78,38 +87,33 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       img.onload = () => {
         URL.revokeObjectURL(url);
-        
+
         const width = img.width;
         const height = img.height;
 
-        // STRICT VALIDATION: Must be exactly 1080x1080
-        if (width !== 1080 || height !== 1080) {
-          resolve({ 
-            valid: false, 
-            width, 
-            height,
-            error: `Image must be exactly 1080x1080 pixels. Current image is ${width}x${height} pixels`
-          });
-        } else {
-          resolve({ valid: true, width, height });
-        }
+        resolve({ valid: true, width, height });
       };
 
       img.onerror = () => {
         URL.revokeObjectURL(url);
-        resolve({ valid: false, error: 'Failed to load image. Please try another file' });
+        resolve({
+          valid: false,
+          error: 'Failed to load image. Please try another file'
+        });
       };
 
       img.src = url;
     });
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    
+
     // Reset input to allow selecting the same file again
     event.target.value = '';
-    
+
     if (!file) return;
 
     setIsLoading(true);
@@ -117,7 +121,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     try {
       const validation = await validateImageDimensions(file);
-      
+
       if (!validation.valid) {
         setErrorMessage(validation.error || 'Invalid image dimensions');
         setIsLoading(false);
@@ -139,7 +143,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         onImageSelect(null);
       };
       reader.readAsDataURL(file);
-
     } catch (err) {
       console.error('Error validating image:', err);
       setErrorMessage('Error processing image. Please try again');
@@ -148,12 +151,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     }
   };
 
-  const handleGalleryFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGalleryFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = event.target.files;
-    
+
     // Reset input to allow selecting the same files again
     event.target.value = '';
-    
+
     if (!files || files.length === 0) return;
 
     // Check gallery limit
@@ -173,14 +178,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     for (const file of filesArray) {
       try {
         const validation = await validateImageDimensions(file);
-        
+
         if (!validation.valid) {
           failedFiles.push(`${file.name}: ${validation.error}`);
           continue;
         }
 
         validFiles.push(file);
-        
+
         // Create preview
         const reader = new FileReader();
         const preview = await new Promise<string>((resolve, reject) => {
@@ -194,7 +199,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           preview,
           name: file.name
         });
-
       } catch (err) {
         console.error(`Error processing ${file.name}:`, err);
         failedFiles.push(`${file.name}: Failed to process`);
@@ -210,7 +214,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     if (newGalleryItems.length > 0) {
       const updatedGallery = [...gallery, ...newGalleryItems];
       setGallery(updatedGallery);
-      
+
       const allFiles = updatedGallery.map(item => item.file!).filter(Boolean);
       onGalleryChange?.(allFiles);
     }
@@ -222,7 +226,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     const newGallery = [...gallery];
     newGallery.splice(index, 1);
     setGallery(newGallery);
-    
+
     const files = newGallery.map(item => item.file!).filter(Boolean);
     onGalleryChange?.(files);
   };
@@ -230,8 +234,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   return (
     <div className="w-full space-y-4">
       {/* Main Image Upload */}
-      <div 
-        className="upload-square upload-square--lg cursor-pointer overflow-hidden transition-colors relative rounded-lg" 
+      <div
+        className="upload-square upload-square--lg cursor-pointer overflow-hidden transition-colors relative rounded-lg"
         onClick={handleImageClick}
       >
         <img
@@ -250,14 +254,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         )}
       </div>
 
-      {/* Dimension requirement notice */}
-      <div className="text-xs text-gray-400 text-center">
-        Images must be exactly 1080x1080 pixels (JPG or PNG, max 5MB)
-      </div>
-
       {/* Gallery Upload */}
       <div className="mt-4">
-        <p className="text-sm text-[#EAEEDD] mb-2">Additional Images (up to 9)</p>
+        <p className="text-sm text-[#EAEEDD] mb-2">
+          Additional Images (up to 9)
+        </p>
 
         <div
           onClick={handleGalleryClick}
@@ -270,8 +271,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           ) : (
             <>
               <Plus size={24} className="text-[#EAEEDD]" />
-              <p className="text-sm text-[#EAEEDD]">Click to add additional images</p>
-              <p className="text-xs text-gray-400">Each image must be 1080x1080 pixels</p>
+              <p className="text-sm text-[#EAEEDD]">
+                Click to add additional images
+              </p>
             </>
           )}
         </div>
@@ -279,15 +281,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         {/* Gallery Items */}
         <div className="mt-4 space-y-2">
           {gallery.map((item, index) => (
-            <div key={index} className="flex items-center gap-3 p-2 rounded-lg bg-[#2E2C2C] border border-[#78788086]">
+            <div
+              key={index}
+              className="flex items-center gap-3 p-2 rounded-lg bg-[#2E2C2C] border border-[#78788086]"
+            >
               <div className="upload-thumb">
-                <img src={item.preview} alt={`Gallery image ${index + 1}`} className="upload-thumb__img" />
+                <img
+                  src={item.preview}
+                  alt={`Gallery image ${index + 1}`}
+                  className="upload-thumb__img"
+                />
               </div>
               <span className="flex-1 truncate text-sm text-[#EAEEDD]">
                 {item?.name || `Image ${index + 1}`}
               </span>
               <button
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   removeGalleryImage(index);
                 }}
@@ -303,20 +312,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       </div>
 
       {/* Hidden file inputs */}
-      <input 
-        ref={fileInputRef} 
-        type="file" 
-        accept="image/jpeg,image/png,image/jpg" 
-        onChange={handleFileChange} 
-        className="hidden" 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/jpg"
+        onChange={handleFileChange}
+        className="hidden"
       />
-      <input 
-        ref={galleryInputRef} 
-        type="file" 
-        accept="image/jpeg,image/png,image/jpg" 
-        onChange={handleGalleryFileChange} 
-        multiple 
-        className="hidden" 
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/jpg"
+        onChange={handleGalleryFileChange}
+        multiple
+        className="hidden"
       />
 
       {/* Error message */}
@@ -347,10 +356,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           min-height: 420px;
         }
         @media (min-width: 640px) {
-          .upload-square--lg { min-height: 500px; }
+          .upload-square--lg {
+            min-height: 500px;
+          }
         }
         @media (min-width: 768px) {
-          .upload-square--lg { min-height: 560px; }
+          .upload-square--lg {
+            min-height: 560px;
+          }
         }
         .upload-square__img {
           position: absolute;
