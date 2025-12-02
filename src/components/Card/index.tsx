@@ -45,27 +45,28 @@ const Card: React.FC<CardProps> = ({ card }) => {
   const navigate = useNavigate();
   const saveEvent = useSaveEvent();
 
-  const formatHostedBy = useCallback((hosts: string[]) => {
-    if (!Array.isArray(hosts)) return null;
-    
-    // Si hosts es un array de strings (nombres), úsalos directamente
-    if (hosts.length > 0 && typeof hosts[0] === 'string') {
-      return `Hosted by: ${hosts.join(', ')}`;
-    }
-    
-    // Si hosts es un array de IDs, usa host_details para mapear
-    if (card?.host_details) {
-      const names = hosts
-        .map((hostId) => {
-          const host = card.host_details?.find((h) => h.id === hostId);
-          return host?.username;
-        })
-        .filter(Boolean);
-      return names.length ? `Hosted by: ${names.join(', ')}` : null;
-    }
-    
-    return null;
-  }, [card?.host_details]);
+ // Reemplaza la función formatHostedBy en Card.tsx con esta versión corregida:
+const formatHostedBy = useCallback((hosts: string[]) => {
+  if (!Array.isArray(hosts)) return null;
+  
+  // Si tenemos host_details, usamos esa información para obtener los nombres
+  if (card?.host_details && card.host_details.length > 0) {
+    const names = hosts
+      .map((hostId) => {
+        const host = card.host_details?.find((h) => h.id === hostId);
+        return host?.username;
+      })
+      .filter(Boolean);
+    return names.length ? `Hosted by: ${names.join(', ')}` : null;
+  }
+  
+  // Si no hay host_details pero hosts es array de strings, los mostramos directamente
+  if (hosts.length > 0 && typeof hosts[0] === 'string') {
+    return `Hosted by: ${hosts.join(', ')}`;
+  }
+  
+  return null;
+}, [card?.host_details]);
 
   const handleBookmarkClick = useCallback(
     (e: React.MouseEvent) => {

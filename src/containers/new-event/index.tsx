@@ -336,9 +336,9 @@ const NewEvent = () => {
 
       const eventData: CreateEventPayload = {
         title: formData.eventTitle.value,
-        event_type: 'MembersEvent',
-        start_date: saveFormatDate(formData.startDate.value),
-        end_date: saveFormatDate(formData.endDate.value),
+       event_type: formData.eventType.value, 
+  start_date: saveFormatDate(formData.startDate.value),
+  end_date: saveFormatDate(formData.endDate.value),
         ...(formData.city.value !== undefined && {
           city: formData.city.value ?? ''
         }),

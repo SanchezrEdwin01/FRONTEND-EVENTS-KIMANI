@@ -683,7 +683,7 @@ const ViewEventPage: React.FC<ViewEventPageProps> = ({
         </section>
 
         {renderPeopleSection()}
-        {renderLocationSection()}
+        {/* renderLocationSection() */}
         {renderDescriptionSection()}
         {renderAttachmentsSection()}
 
