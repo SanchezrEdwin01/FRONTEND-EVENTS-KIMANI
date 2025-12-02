@@ -1,7 +1,7 @@
 export const eventTypeOptions = [
-  { value: 'KimaniEvents', label: 'Kimani event' },
-  { value: 'MemberEvents', label: 'Members events' },
-  { value: 'OtherEvents', label: 'Other event' }
+  { value: 'KimaniEvent', label: 'Kimani event' },
+  { value: 'MembersEvent', label: 'Members event' },
+  { value: 'Other', label: 'Other event' }
 ];
 
 export const planOptions = [

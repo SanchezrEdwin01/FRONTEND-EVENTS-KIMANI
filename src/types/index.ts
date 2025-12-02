@@ -17,7 +17,7 @@ export interface TicketConfig {
 
 export interface CreateEventPayload {
   title: string;
-  event_type: "MembersEvent";
+  event_type: string;
   start_date: string;
   end_date: string;
   city: string;
