@@ -1,8 +1,7 @@
 import {
   HomeIcon,
-  MagnifyingGlassIcon,
-  UserPlusIcon,
-  UserGroupIcon
+  ChatBubbleLeftRightIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import './index.scss';
 import React, { memo } from 'react';
@@ -11,8 +10,8 @@ import { useBaseURL } from '@/hooks/useBaseURL';
 import UserIcon from '../UserIcon';
 
 const Footer = () => {
-    const { data } = useUser();
-    const { user } = data || {};
+  const { data } = useUser();
+  const { user } = data || {};
   const BASE_URL = useBaseURL();
 
   return (
@@ -24,12 +23,14 @@ const Footer = () => {
             <span>Home</span>
           </button>
         </a>
-        <a href={`${BASE_URL}/search`}>
+
+        <a href={`${BASE_URL}/chat`}>
           <button>
-            <MagnifyingGlassIcon alt="Search" height={24} />
-            <span>Search</span>
+            <ChatBubbleLeftRightIcon alt="Chat" height={24} />
+            <span>Chat</span>
           </button>
         </a>
+
         <a href={`${BASE_URL}/settings`}>
           <button>
             <UserIcon
@@ -40,20 +41,22 @@ const Footer = () => {
                 marginTop: '-12px',
                 background: '#020202',
                 borderTopLeftRadius: '100%',
-                borderTopRightRadius: '100%'
+                borderTopRightRadius: '100%',
               }}
             />
           </button>
         </a>
+
         <a href={`${BASE_URL}/friends`}>
           <button>
-            <UserPlusIcon alt="friends" height={24} />
+            <UserGroupIcon alt="Friends" height={24} />
             <span>Friends</span>
           </button>
         </a>
+
         <a href={`${BASE_URL}/members`}>
           <button>
-            <UserGroupIcon alt="members" height={24} />
+            <UserGroupIcon alt="Members" height={24} />
             <span>Members</span>
           </button>
         </a>
